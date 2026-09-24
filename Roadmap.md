@@ -50,3 +50,13 @@
 - [ ] Crossterm mouse event handling wired into ratatui event loop
 - [ ] Tooltip
     - [ ] Atom name + ID on hover (e.g: `O(1)`)
+
+## Order
+
+- [ ] Render a static sphere
+- [ ] Add camera (control)
+- [ ] Add z-buffer
+- [ ] Add 2nd sphere + cylinder
+- [ ] Add ID Buffer + hover tooltip
+- [ ] Parse a .sdf
+- [ ] Render a .sdf
