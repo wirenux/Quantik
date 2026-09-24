@@ -1,3 +1,12 @@
+use crossterm::style::{Color as CrosstermColor, SetBackgroundColor, SetForegroundColor, Print};
+use crossterm::{
+    QueueableCommand,
+    execute,
+    cursor::MoveTo,
+    terminal::{Clear, ClearType},
+};
+use std::io::{stdout, self, Write};
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Color {
     pub r: u8,
@@ -47,11 +56,38 @@ impl Framebuffer {
             Color::BLACK
         }
     }
+
+    pub fn display(&self) -> io::Result<()> {
+        let mut stdout = io::stdout();
+
+        for y in (0..self.height).step_by(2) {
+            for x in 0..self.width {
+                let top = self.get_pixels(x, y);
+                let bottom = self.get_pixels(x, y + 1);
+
+                stdout
+                    .queue(SetForegroundColor(CrosstermColor::Rgb { r: top.r, g: top.g, b: top.b }))?
+                    .queue(SetBackgroundColor(CrosstermColor::Rgb { r: bottom.r, g: bottom.g, b: bottom.b }))?
+                    .queue(Print("▀"))?;
+            }
+            stdout.queue(Print("\x1b[0m\n"))?;
+        }
+
+        stdout.flush()?;
+        Ok(())
+    }
 }
 
 fn main() {
-    let mut framebuffer = Framebuffer::new(10, 10);
+    let _ = execute!(
+        stdout(),
+        Clear(ClearType::All),
+        MoveTo(0, 0)
+    );
+
+    let mut framebuffer = Framebuffer::new(125, 65);
     Framebuffer::set_pixel(&mut framebuffer, 1, 1, Color::WHITE);
-    println!("{:?}", framebuffer.pixels);
-    println!("{:?}", Framebuffer::get_pixels(&framebuffer, 1, 1));
+    Framebuffer::set_pixel(&mut framebuffer, 2, 1, Color { r: 255, g: 0, b: 0});
+    Framebuffer::set_pixel(&mut framebuffer, 3, 1, Color::WHITE);
+    let _ = Framebuffer::display(&framebuffer);
 }
