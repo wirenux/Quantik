@@ -2,11 +2,11 @@
 
 ## Math / Core
 
-- [ ] Vector/matrix/quaterninon library (`glam`)
-- [ ] Model -> View -> Projection transform pipeline
-    - [ ] Model matrix: places each individual atom/bond mesh in the scene
-    - [ ] View matrix: reposition the scene relative to the camera
-    - [ ] Projection matrix: project camera-relative 3D points onto the 2D screen (perspective)
+- [x] Vector/matrix/quaterninon library (`glam`)
+- [x] Model -> View -> Projection transform pipeline
+    - [x] Model matrix: places each individual atom/bond mesh in the scene
+    - [x] View matrix: reposition the scene relative to the camera
+    - [x] Projection matrix: project camera-relative 3D points onto the 2D screen (perspective)
 
 ## Molecule data
 
@@ -19,23 +19,21 @@
 
 ## Meshes
 
+- [x] Procedural cube generation (for dev)
 - [ ] Procedural sphere generation (icosphere or UV-sphere) for atoms
 - [ ] Procedural cylinder generation for bonds
 
 ## Rendering
 
 - [ ] Rasterizer: 3D triangle -> 2D pixel buffer (color + depth per pixel)
-- [ ] Render at 2x vertical resolution (each terminal "cell" = 2 stacked pixels via "`▀`", top = fg, bottom = bg)
 - [ ] Depth buffer (z-buffer) for corrent occlusion between atoms/bonds
 - [ ] Basic shading (diffuse light + ambient light)
-- [ ] (LATER) Color approximation for non-truecolor terminal
 - [ ] ID buffer (alongside the depth buffer): tags each pixel with the atoms it belongs to (for tooltip)
 
 ## Camera
 
-- [ ] Camera position / orientation state
+- [x] Camera position / orientation state
 - [ ] Orbit control: drag to rotate, scroll to zoom, (OPTIONAL ?) pan
-- [ ] Shadow
 
 ## minifb
 
@@ -61,9 +59,8 @@
 - [ ] Parse a .sdf
 - [ ] Render a .sdf
 
-
 ## Idea
 
-- [ ] Maybe use minifb instead of Ratatui to get a simple window like "black" (on github)
+- [x] Maybe use minifb instead of Ratatui to get a simple window like "black" (on github)
 - [ ] The minifb advantage is the macOS top bar can be switch to a windows/linux "in window" top bar
 - [ ] since minifb can't add top bar to linux -> rely on shortcut
