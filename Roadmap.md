@@ -60,3 +60,8 @@
 - [ ] Add ID Buffer + hover tooltip
 - [ ] Parse a .sdf
 - [ ] Render a .sdf
+
+
+## Idea
+
+- [ ] Maybe use minifb instead of Ratatui to get a simple window like "black" (on github)
