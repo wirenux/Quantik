@@ -1,3 +1,5 @@
+use std::f32::consts::PI;
+
 use glam::{Mat4, Vec3, Vec4, Vec4Swizzles};
 use crate::camera::Camera;
 use crate::window::{Color, Framebuffer};
@@ -46,6 +48,44 @@ impl Mesh {
         Mesh { vertices, indices }
     }
 
+    pub fn generate_uv_sphere(radius: f32, sectors: u32, stacks: u32) -> Self {
+        let sectors = sectors.max(5);
+        let stacks = stacks.max(5);
+
+        let mut vertices = Vec::new();
+
+        for i in 0..=stacks {
+            let phi = PI * i as f32 / stacks as f32;
+            let y = phi.cos() * radius;
+            let r = phi.sin() * radius;
+
+            for j in 0..=sectors {
+                let tetha = 2.0 * PI * j as f32 / sectors as f32;
+                let x = r * tetha.cos();
+                let z = r * tetha.sin();
+
+                vertices.push(Vertex {
+                    position: Vec3::new(x, y, z),
+                });
+            }
+        }
+
+        let mut indices = Vec::new();
+        let row = sectors + 1;
+
+        for i in 0..stacks {
+            for j in 0..sectors {
+                let a = i * row + j;
+                let b = a + row;
+
+                indices.extend_from_slice(&[a, a + 1, b]);
+                indices.extend_from_slice(&[a + 1, b + 1, b]);
+            }
+        }
+
+        Mesh { vertices, indices }
+    }
+
     pub fn draw(&self, framebuffer: &mut Framebuffer, model: Mat4, camera: &Camera) {
         let width = framebuffer.width;
         let height = framebuffer.height;
@@ -63,10 +103,14 @@ impl Mesh {
 
             let edge1 = v1 - v0;
             let edge2 = v2 - v0;
-            let normal = edge1.cross(edge2).normalize();
-            let view_dir = (camera.position - v0).normalize();
+            let n = edge1.cross(edge2);
 
-            // back-face culling
+            if n.length_squared() < 1e-12 {
+                continue;
+            }
+
+            let normal = n.normalize();
+            let view_dir = (camera.position - v0).normalize();
             if normal.dot(view_dir) <= 0.0 {
                 continue;
             }

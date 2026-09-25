@@ -14,7 +14,8 @@ fn main() {
     let mut framebuffer = Framebuffer::new(WIDTH, HEIGHT);
     let mut window = AppWindow::new("Quantik - MOLECULE_NAME: CID", WIDTH, HEIGHT);
 
-    let cube = Mesh::generate_cube(1.0);
+    // let cube = Mesh::generate_cube(1.0);
+    let sphere = Mesh::generate_uv_sphere(1.0, 32, 16);
     let angle: f32 = 0.0;
 
     let mut camera = Camera::new(
@@ -38,7 +39,7 @@ fn main() {
 
         let model = Mat4::from_rotation_x(angle) * Mat4::from_rotation_y(angle);
 
-        cube.draw(&mut framebuffer, model, &camera);
+        sphere.draw(&mut framebuffer, model, &camera);
         
         let buffer = framebuffer.to_u32_buffer();
         window.update_with_buffer(&buffer, framebuffer.width, framebuffer.height)
