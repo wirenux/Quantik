@@ -20,7 +20,7 @@
 ## Meshes
 
 - [x] Procedural cube generation (for dev)
-- [ ] Procedural sphere generation (icosphere or UV-sphere) for atoms
+- [x] Procedural sphere generation (icosphere or UV-sphere) for atoms
 - [ ] Procedural cylinder generation for bonds
 
 ## Rendering
@@ -42,6 +42,7 @@
 - [ ] Window title with the name of the molecule / atoms and the CID (e.g: "`Quantik - Water: 962`")
 - [ ] macOS menu with keyboard shortcut
 - [ ] Menu to select molecule (or just a file opener for .sdf)
+- [ ] Use GPU
 
 ### Mouse click / integration
 
