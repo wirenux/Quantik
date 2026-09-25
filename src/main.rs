@@ -1,93 +1,32 @@
-use crossterm::style::{Color as CrosstermColor, SetBackgroundColor, SetForegroundColor, Print};
-use crossterm::{
-    QueueableCommand,
-    execute,
-    cursor::MoveTo,
-    terminal::{Clear, ClearType},
-};
-use std::io::{stdout, self, Write};
+mod window;
+use window::{AppWindow, Color, Framebuffer};
 
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Color {
-    pub r: u8,
-    pub g: u8,
-    pub b: u8,
-}
-
-impl Color {
-    pub const BLACK: Color = Color { r: 0, g: 0, b: 0 };
-    pub const WHITE: Color = Color { r: 255, g: 255, b: 255 };
-
-    pub fn new(r: u8, g: u8, b: u8) -> Self {
-        Self { r, g, b }
-    }
-}
-
-pub struct Framebuffer {
-    pub width: usize,
-    pub height: usize,
-    pub pixels: Vec<Color>,
-}
-
-impl Framebuffer {
-    pub fn new(width: usize, height: usize) -> Self {
-        Self {
-            width,
-            height,
-            pixels: vec![Color::BLACK; width * height],
-        }
-    }
-
-    pub fn clear(&mut self, color: Color) {
-        self.pixels.fill(color);
-    }
-
-    pub fn set_pixel(&mut self, x: usize, y: usize, color: Color) {
-        if x < self.width && y < self.height {
-            let index = y * self.width + x;
-            self.pixels[index] = color;
-        }
-    }
-
-    pub fn get_pixels(&self, x: usize, y: usize) -> Color {
-        if x < self.width && y < self.height {
-            self.pixels[y * self.width + x]
-        } else {
-            Color::BLACK
-        }
-    }
-
-    pub fn display(&self) -> io::Result<()> {
-        let mut stdout = io::stdout();
-
-        for y in (0..self.height).step_by(2) {
-            for x in 0..self.width {
-                let top = self.get_pixels(x, y);
-                let bottom = self.get_pixels(x, y + 1);
-
-                stdout
-                    .queue(SetForegroundColor(CrosstermColor::Rgb { r: top.r, g: top.g, b: top.b }))?
-                    .queue(SetBackgroundColor(CrosstermColor::Rgb { r: bottom.r, g: bottom.g, b: bottom.b }))?
-                    .queue(Print("▀"))?;
-            }
-            stdout.queue(Print("\x1b[0m\n"))?;
-        }
-
-        stdout.flush()?;
-        Ok(())
-    }
-}
+const WIDTH: usize = 1280;
+const HEIGHT: usize = 720;
 
 fn main() {
-    let _ = execute!(
-        stdout(),
-        Clear(ClearType::All),
-        MoveTo(0, 0)
-    );
+    let mut framebuffer = Framebuffer::new(WIDTH, HEIGHT);
 
-    let mut framebuffer = Framebuffer::new(125, 65);
     Framebuffer::set_pixel(&mut framebuffer, 1, 1, Color::WHITE);
     Framebuffer::set_pixel(&mut framebuffer, 2, 1, Color { r: 255, g: 0, b: 0});
     Framebuffer::set_pixel(&mut framebuffer, 3, 1, Color::WHITE);
-    let _ = Framebuffer::display(&framebuffer);
+
+    let mut window = AppWindow::new("Quantik - MOLECULE_NAME: CID", WIDTH, HEIGHT);
+
+    while window.active() {
+        let (current_width, current_height) = window.get_size();
+
+        if framebuffer.width != current_width || framebuffer.height != current_height {
+            framebuffer.resize(current_width, current_height); // resize content of fb when releasing the resize handle
+            
+            // future update loop
+            framebuffer.set_pixel(1, 1, Color::WHITE);
+            framebuffer.set_pixel(2, 1, Color::RED);
+            framebuffer.set_pixel(3, 1, Color::WHITE);
+        }
+
+        let buffer = framebuffer.to_u32_buffer();
+
+        window.update_with_buffer(&buffer, framebuffer.width, framebuffer.height)
+    }
 }
