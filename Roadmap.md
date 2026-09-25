@@ -65,3 +65,5 @@
 ## Idea
 
 - [ ] Maybe use minifb instead of Ratatui to get a simple window like "black" (on github)
+- [ ] The minifb advantage is the macOS top bar can be switch to a windows/linux "in window" top bar
+- [ ] since minifb can't add top bar to linux -> rely on shortcut
