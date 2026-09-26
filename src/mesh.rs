@@ -92,7 +92,7 @@ impl Mesh {
         let aspect_ratio = width as f32 / height as f32;
         let view_proj = camera.projection_matrix(aspect_ratio) * camera.view_matrix();
 
-        let light_dir = Vec3::new(1.0, 3.0, 2.5);
+        let light_dir = Vec3::new(1.0, 3.0, 2.5); // light position
 
         for chunk in self.indices.chunks(3) {
             let i0 = chunk[0] as usize;
@@ -120,6 +120,7 @@ impl Mesh {
             let brightness = normal.dot(light_dir).max(0.0); // return 0 is value is negative
             let intensity = 0.2 + 0.8 * brightness;
 
+            // 255.0 value can be change to change the color of the object
             let r = (255.0 * intensity) as u8;
             let g = (255.0 * intensity) as u8;
             let b = (255.0 * intensity) as u8;
