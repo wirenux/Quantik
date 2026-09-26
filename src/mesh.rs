@@ -92,6 +92,8 @@ impl Mesh {
         let aspect_ratio = width as f32 / height as f32;
         let view_proj = camera.projection_matrix(aspect_ratio) * camera.view_matrix();
 
+        let light_dir = Vec3::new(1.0, 3.0, 2.5);
+
         for chunk in self.indices.chunks(3) {
             let i0 = chunk[0] as usize;
             let i1 = chunk[1] as usize;
@@ -115,12 +117,20 @@ impl Mesh {
                 continue;
             }
 
+            let brightness = normal.dot(light_dir).max(0.0); // return 0 is value is negative
+            let intensity = 0.2 + 0.8 * brightness;
+
+            let r = (255.0 * intensity) as u8;
+            let g = (255.0 * intensity) as u8;
+            let b = (255.0 * intensity) as u8;
+            let shaded_color = Color::new(r, g, b);
+
             let p0 = project_point(v0, view_proj, width, height);
             let p1 = project_point(v1, view_proj, width, height);
             let p2 = project_point(v2, view_proj, width, height);
 
             if let (Some((x0, y0)), Some((x1, y1)), Some((x2, y2))) = (p0, p1, p2) {
-                framebuffer.draw_triangle((x0, y0), (x1, y1), (x2, y2), Color::WHITE);
+                framebuffer.draw_triangle((x0, y0), (x1, y1), (x2, y2), shaded_color);
                 framebuffer.draw_line(x0 as i32, y0 as i32, x1 as i32, y1 as i32, Color::BLACK);
                 framebuffer.draw_line(x1 as i32, y1 as i32, x2 as i32, y2 as i32, Color::BLACK);
                 framebuffer.draw_line(x2 as i32, y2 as i32, x0 as i32, y0 as i32, Color::BLACK);
