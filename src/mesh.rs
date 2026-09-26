@@ -92,16 +92,26 @@ impl Mesh {
         let aspect_ratio = width as f32 / height as f32;
         let view_proj = camera.projection_matrix(aspect_ratio) * camera.view_matrix();
 
-        let light_dir = Vec3::new(1.0, 3.0, 2.5); // light position
+        let light_dir = Vec3::new(1.0, 3.0, 2.5).normalize(); // light position
+
+        let world: Vec<Vec3> = self.vertices
+            .iter()
+            .map(|v| (model * Vec4::from((v.position, 1.0))).xyz())
+            .collect();
+
+        let screen: Vec<Option<(usize, usize, f32)>> = world
+            .iter()
+            .map(|&p| project_point(p, view_proj, width, height))
+            .collect();
 
         for chunk in self.indices.chunks(3) {
             let i0 = chunk[0] as usize;
             let i1 = chunk[1] as usize;
             let i2 = chunk[2] as usize;
 
-            let v0 = (model * Vec4::from((self.vertices[i0].position, 1.0))).xyz();
-            let v1 = (model * Vec4::from((self.vertices[i1].position, 1.0))).xyz();
-            let v2 = (model * Vec4::from((self.vertices[i2].position, 1.0))).xyz();
+            let v0 = world[i0];
+            let v1 = world[i1];
+            let v2 = world[i2];
 
             let edge1 = v1 - v0;
             let edge2 = v2 - v0;
@@ -126,21 +136,17 @@ impl Mesh {
             let b = (255.0 * intensity) as u8;
             let shaded_color = Color::new(r, g, b);
 
-            let p0 = project_point(v0, view_proj, width, height);
-            let p1 = project_point(v1, view_proj, width, height);
-            let p2 = project_point(v2, view_proj, width, height);
-
-            if let (Some((x0, y0)), Some((x1, y1)), Some((x2, y2))) = (p0, p1, p2) {
-                framebuffer.draw_triangle((x0, y0), (x1, y1), (x2, y2), shaded_color);
-                framebuffer.draw_line(x0 as i32, y0 as i32, x1 as i32, y1 as i32, Color::BLACK);
-                framebuffer.draw_line(x1 as i32, y1 as i32, x2 as i32, y2 as i32, Color::BLACK);
-                framebuffer.draw_line(x2 as i32, y2 as i32, x0 as i32, y0 as i32, Color::BLACK);
+            if let (Some((x0, y0, w0)), Some((x1, y1, w1)), Some((x2, y2, w2))) = (screen[i0], screen[i1], screen[i2]) {
+                framebuffer.draw_triangle((x0, y0), (x1, y1), (x2, y2), w0, w1, w2, shaded_color);
+                // framebuffer.draw_line_depth(x0 as i32, y0 as i32, x1 as i32, y1 as i32, w0, w1, Color::BLACK);
+                // framebuffer.draw_line_depth(x1 as i32, y1 as i32, x2 as i32, y2 as i32, w1, w2, Color::BLACK);
+                // framebuffer.draw_line_depth(x2 as i32, y2 as i32, x0 as i32, y0 as i32, w2, w0, Color::BLACK);
             }
         }
     }
 }
 
-pub fn project_point(point: Vec3, mvp: Mat4, width: usize, height: usize) -> Option<(usize, usize)> {
+pub fn project_point(point: Vec3, mvp: Mat4, width: usize, height: usize) -> Option<(usize, usize, f32)> {
     // convert 3D position (x, y, z) to homogeneous 4D coordinates (x, y, z, w=1.0)
     let point_4d = Vec4::from((point, 1.0));
     let clip_space = mvp * point_4d;
@@ -161,7 +167,7 @@ pub fn project_point(point: Vec3, mvp: Mat4, width: usize, height: usize) -> Opt
 
     // check if pixel inside window dimension
     if x < width && y < height {
-        Some((x, y))
+        Some((x, y, clip_space.w))
     } else {
         None
     }
