@@ -3,7 +3,7 @@ mod mesh;
 mod camera;
 
 use camera::Camera;
-use glam::{Mat4, Vec3};
+use glam::{Mat4, Quat, Vec3};
 use mesh::Mesh;
 use window::{AppWindow, Color, Framebuffer};
 
@@ -14,12 +14,22 @@ fn main() {
     let mut framebuffer = Framebuffer::new(WIDTH, HEIGHT);
     let mut window = AppWindow::new("Quantik - MOLECULE_NAME: CID", WIDTH, HEIGHT);
 
-    
-    let sphere_a = Mesh::generate_uv_sphere(0.6, 32, 16);
-    let cube = Mesh::generate_cube(1.0);
+    let sphere = Mesh::generate_uv_sphere(1.0, 24, 12);
+    let cylinder = Mesh::generate_cylinder(1.0, 1.0, 8);
 
-    let model_a = Mat4::from_translation(Vec3::new(-0.4, 0.0,  0.5));
-    let model_b = Mat4::from_translation(Vec3::new( 0.4, 0.0, -0.5));
+    let a = Vec3::new(-1.5, 0.0, 0.0);
+    let b = Vec3::new( 1.5, 0.5, 0.0);
+
+    let model_a = Mat4::from_translation(a) * Mat4::from_scale(Vec3::splat(0.4));
+    let model_b = Mat4::from_translation(b) * Mat4::from_scale(Vec3::splat(0.4));
+
+    let dir = (b - a).normalize();
+    let mid = (a + b) * 0.5;
+    let len = (b - a).length();
+    let rot = Quat::from_rotation_arc(Vec3::Y, dir);
+    let model_bond = Mat4::from_translation(mid)
+        * Mat4::from_quat(rot)
+        * Mat4::from_scale(Vec3::new(0.1, len, 0.1));
 
     let mut camera = Camera::new(
         Vec3::new(0.0, 0.0, 3.0),
@@ -51,8 +61,11 @@ fn main() {
 
         if needs_redraw {
             framebuffer.clear(Color::BLACK);
-            cube.draw(&mut framebuffer, model_b, &camera);
-            sphere_a.draw(&mut framebuffer, model_a, &camera);
+
+            sphere.draw(&mut framebuffer, model_a, &camera);
+            sphere.draw(&mut framebuffer, model_b, &camera);
+            cylinder.draw(&mut framebuffer, model_bond, &camera);
+
             needs_redraw = false;
             frames += 1;
         }

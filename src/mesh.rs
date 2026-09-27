@@ -86,6 +86,38 @@ impl Mesh {
         Mesh { vertices, indices }
     }
 
+    pub fn generate_cylinder(radius: f32, height: f32, segments: u32) -> Self {
+        let segments = segments.max(3);
+        let half_h = height / 2.0;
+
+        let mut vertices = Vec::new();
+
+        for j in 0..=segments {
+            let theta = 2.0 * std::f32::consts::PI * j as f32 / segments as f32;
+            let x = radius * theta.cos();
+            let z = radius * theta.sin();
+
+            // bottom vertex
+            vertices.push(Vertex { position: Vec3::new(x, -half_h, z) });
+            // top vertex
+            vertices.push(Vertex { position: Vec3::new(x, half_h, z) });
+        }
+
+        let mut indices = Vec::new();
+
+        for j in 0..segments {
+            let bl = 2 * j;
+            let tl = 2 * j + 1;
+            let br = 2 * (j + 1);
+            let tr = 2 * (j + 1) + 1;
+
+            indices.extend_from_slice(&[bl, tr, br]);
+            indices.extend_from_slice(&[bl, tl, tr]);
+        }
+
+        Mesh { vertices, indices }
+    }
+
     pub fn draw(&self, framebuffer: &mut Framebuffer, model: Mat4, camera: &Camera) {
         let width = framebuffer.width;
         let height = framebuffer.height;

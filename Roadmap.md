@@ -21,7 +21,7 @@
 
 - [x] Procedural cube generation (for dev)
 - [x] Procedural sphere generation (icosphere or UV-sphere) for atoms
-- [ ] Procedural cylinder generation for bonds
+- [x] Procedural cylinder generation for bonds
 
 ## Rendering
 
@@ -52,10 +52,10 @@
 
 ## Order
 
-- [ ] Render a static sphere
+- [x] Render a static sphere
 - [ ] Add camera (control)
-- [ ] Add z-buffer
-- [ ] Add 2nd sphere + cylinder
+- [x] Add z-buffer
+- [x] Add 2nd sphere + cylinder
 - [ ] Add ID Buffer + hover tooltip
 - [ ] Parse a .sdf
 - [ ] Render a .sdf
