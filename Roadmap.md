@@ -33,7 +33,7 @@
 ## Camera
 
 - [x] Camera position / orientation state
-- [ ] Orbit control: drag to rotate, scroll to zoom, (OPTIONAL ?) pan
+- [x] Orbit control: drag to rotate, scroll to zoom
 
 ## minifb
 

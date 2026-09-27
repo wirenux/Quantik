@@ -32,8 +32,8 @@ fn main() {
         * Mat4::from_scale(Vec3::new(0.1, len, 0.1));
 
     let mut camera = Camera::new(
-        Vec3::new(0.0, 0.0, 3.0),
         Vec3::ZERO,
+        5.0,
         60.0,
         0.1,
         100.0,
@@ -53,9 +53,8 @@ fn main() {
         }
 
 
-        let prev_pos = camera.position;
         camera.handle_input(&window);
-        if camera.position != prev_pos {
+        if camera.handle_input(&window) {
             needs_redraw = true;
         }
 

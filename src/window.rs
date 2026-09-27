@@ -1,4 +1,4 @@
-use minifb::{Key, Window, WindowOptions};
+use minifb::{Key, Window, WindowOptions, MouseButton, MouseMode};
 use rayon::prelude::*;
 
 pub struct AppWindow {
@@ -285,5 +285,17 @@ impl AppWindow {
 
     pub fn is_key_down(&self, key: Key) -> bool {
         self.inner.is_key_down(key)
+    }
+
+    pub fn get_mouse_pos(&self) -> Option<(f32, f32)> {
+        self.inner.get_mouse_pos(MouseMode::Discard)
+    }
+
+    pub fn is_mouse_down(&self, left: bool) -> bool {
+        self.inner.get_mouse_down(if left {MouseButton::Left} else {MouseButton::Right})
+    }
+
+    pub fn get_scroll_wheel(&self) -> Option<(f32, f32)> {
+        self.inner.get_scroll_wheel()
     }
 }
