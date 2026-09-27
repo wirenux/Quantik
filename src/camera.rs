@@ -54,7 +54,7 @@ impl Camera {
             if let (Some((mx, my)), Some((px, py))) = (mouse, self.prev_mouse) {
                 let dx = mx - px;
                 let dy = my - py;
-                let sensitivity = 0.005 as f32;
+                let sensitivity = 0.005_f32;
 
                 self.yaw -= dx * sensitivity;
                 self.pitch += dy * sensitivity;
@@ -71,7 +71,7 @@ impl Camera {
 
         if let Some((_, scroll_y)) = window.get_scroll_wheel() {
             self.distance *= 1.0 - scroll_y * 0.1;
-            self.distance = self.distance.max(0.5);
+            self.distance = self.distance.clamp(4.5, 10.0);
             changed = true;
         }
 
