@@ -71,7 +71,7 @@ impl Camera {
 
         if let Some((_, scroll_y)) = window.get_scroll_wheel() {
             self.distance *= 1.0 - scroll_y * 0.1;
-            self.distance = self.distance.clamp(4.5, 10.0);
+            self.distance = self.distance.clamp(4.5, 50.0);
             changed = true;
         }
 
@@ -87,7 +87,7 @@ impl Camera {
         if changed {
             let max_pitch = 89.0_f32.to_radians();
             self.pitch = self.pitch.clamp(-max_pitch, max_pitch);
-            self.distance = self.distance.clamp(4.5, 10.0);
+            self.distance = self.distance.clamp(4.5, 50.0);
             self.recompute_position();
         }
 

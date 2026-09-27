@@ -10,10 +10,10 @@
 
 ## Molecule data
 
-- [ ] Get `.sdf` file from "`PubChem`"
+- [x] Get `.sdf` file from "`PubChem`"
     - Download : `curl "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/962/SDF?record_type=3d" -o water.sdf`
     - Find CID : `curl https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/water/property/IUPACName/JSON`
-- [ ] Parse `.sdf`
+- [x] Parse `.sdf`
     - [SDF File Format](./SDF.md)
 - [ ] Element table : symbol, atomic radius, CPK Color
 
@@ -25,9 +25,9 @@
 
 ## Rendering
 
-- [ ] Rasterizer: 3D triangle -> 2D pixel buffer (color + depth per pixel)
-- [ ] Depth buffer (z-buffer) for corrent occlusion between atoms/bonds
-- [ ] Basic shading (diffuse light + ambient light)
+- [x] Rasterizer: 3D triangle -> 2D pixel buffer (color + depth per pixel)
+- [x] Depth buffer (z-buffer) for corrent occlusion between atoms/bonds
+- [x] Basic shading (diffuse light + ambient light)
 - [ ] ID buffer (alongside the depth buffer): tags each pixel with the atoms it belongs to (for tooltip)
 
 ## Camera
@@ -53,12 +53,12 @@
 ## Order
 
 - [x] Render a static sphere
-- [ ] Add camera (control)
+- [x] Add camera (control)
 - [x] Add z-buffer
 - [x] Add 2nd sphere + cylinder
 - [ ] Add ID Buffer + hover tooltip
-- [ ] Parse a .sdf
-- [ ] Render a .sdf
+- [x] Parse a .sdf
+- [x] Render a .sdf
 
 ## Idea
 

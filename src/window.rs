@@ -218,8 +218,7 @@ impl Framebuffer {
             let mut w1 = row_w1;
             let mut w2 = row_w2;
 
-            // Recompute inv_w from the row's starting w values each row.
-            // Cheap (once per row) and avoids drift from repeated jumps.
+            // recompute inv_w from the row starting w values each row.
             let mut inv_w = (w0 * inv_d0 + w1 * inv_d1 + w2 * inv_d2) * inv_area;
 
             let row_offset = y * width;

@@ -1,11 +1,13 @@
 mod window;
 mod mesh;
 mod camera;
+mod molecule;
 
 use camera::Camera;
 use glam::{Mat4, Quat, Vec3};
 use mesh::Mesh;
 use window::{AppWindow, Color, Framebuffer};
+use molecule::Molecule;
 
 const WIDTH: usize = 1280;
 const HEIGHT: usize = 720;
@@ -14,26 +16,33 @@ fn main() {
     let mut framebuffer = Framebuffer::new(WIDTH, HEIGHT);
     let mut window = AppWindow::new("Quantik - MOLECULE_NAME: CID", WIDTH, HEIGHT);
 
+    let mol = Molecule::from_sdf_file("sdf/caffeine.sdf").expect("load failed");
+
+    // DEV
+    println!("CID: {}", mol.cid);
+    for (i, a) in mol.atoms.iter().enumerate() {
+        println!("atom {}: {} at {:?}", i, a.element, a.position);
+    }
+    for b in &mol.bonds {
+        println!("bond {} - {} (order {})", b.a, b.b, b.order);
+    }
+    // END OF DEV
+
+    let centroid: Vec3 = mol.atoms.iter().map(|a| a.position).sum::<Vec3>()
+        / mol.atoms.len() as f32; // average position of all the atoms
+
+    let max_r = mol.atoms.iter()
+        .map(|a| (a.position - centroid).length())
+        .fold(0.0_f32, f32::max); // distance from the centroid to the farest atom
+
+    let shift = -centroid; // move molecule centroid, so the camera can look at (0, 0, 0)
+
     let sphere = Mesh::generate_uv_sphere(1.0, 24, 12);
     let cylinder = Mesh::generate_cylinder(1.0, 1.0, 8);
 
-    let a = Vec3::new(-1.5, 0.0, 0.0);
-    let b = Vec3::new( 1.5, 0.5, 0.0);
-
-    let model_a = Mat4::from_translation(a) * Mat4::from_scale(Vec3::splat(0.4));
-    let model_b = Mat4::from_translation(b) * Mat4::from_scale(Vec3::splat(0.4));
-
-    let dir = (b - a).normalize();
-    let mid = (a + b) * 0.5;
-    let len = (b - a).length();
-    let rot = Quat::from_rotation_arc(Vec3::Y, dir);
-    let model_bond = Mat4::from_translation(mid)
-        * Mat4::from_quat(rot)
-        * Mat4::from_scale(Vec3::new(0.1, len, 0.1));
-
     let mut camera = Camera::new(
         Vec3::ZERO,
-        5.0,
+        max_r * 4.0,
         60.0,
         0.1,
         100.0,
@@ -52,8 +61,6 @@ fn main() {
             needs_redraw = true;
         }
 
-
-        camera.handle_input(&window);
         if camera.handle_input(&window) {
             needs_redraw = true;
         }
@@ -61,9 +68,41 @@ fn main() {
         if needs_redraw {
             framebuffer.clear(Color::BLACK);
 
-            sphere.draw(&mut framebuffer, model_a, &camera);
-            sphere.draw(&mut framebuffer, model_b, &camera);
-            cylinder.draw(&mut framebuffer, model_bond, &camera);
+            let atom_radius = 0.25;
+            let bond_radius = 0.08;
+
+            for atom in &mol.atoms {
+                let model = Mat4::from_translation(atom.position + shift)
+                    * Mat4::from_scale(Vec3::splat(atom_radius));
+                sphere.draw(&mut framebuffer, model, &camera);
+            }
+
+            for bond in &mol.bonds {
+                // get the 2 atoms world pos (shifted to be centered)
+                let pa = mol.atoms[bond.a].position + shift;
+                let pb = mol.atoms[bond.b].position + shift;
+
+                let dir = (pb - pa).normalize(); // dir from atom A to atom B
+                let mid = (pa + pb) * 0.5; // center point of the bond (where the cylinder is)
+                let len = (pb - pa).length(); // length of the bond
+                let rot = Quat::from_rotation_arc(Vec3::Y, dir); // rotation to make the cylinder align with A and B
+                let prep = dir.any_orthogonal_vector();
+
+                let n = bond.order as f32; // bond.order in f32 (so the offset can be calculated)
+                let spacing = 0.20; // spacing b/w multiple cylinder
+
+                for i in 0..bond.order {
+                    // n = 1 : 0 offset
+                    // n = 2 : -0.075, +0.075 offset
+                    // n = 3 : -0.15, +0.15 offset
+                    let offset = (i as f32 - (n - 1.0) * 0.5) * spacing;
+
+                    let model = Mat4::from_translation(mid+ prep * offset)
+                        * Mat4::from_quat(rot)
+                        * Mat4::from_scale(Vec3::new(bond_radius, len, bond_radius));
+                    cylinder.draw(&mut framebuffer, model, &camera);
+                }
+            }
 
             needs_redraw = false;
             frames += 1;
