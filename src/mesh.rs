@@ -118,7 +118,7 @@ impl Mesh {
         Mesh { vertices, indices }
     }
 
-    pub fn draw(&self, framebuffer: &mut Framebuffer, model: Mat4, camera: &Camera) {
+    pub fn draw(&self, framebuffer: &mut Framebuffer, model: Mat4, camera: &Camera, base_color: Color) {
         let width = framebuffer.width;
         let height = framebuffer.height;
         let aspect_ratio = width as f32 / height as f32;
@@ -163,9 +163,9 @@ impl Mesh {
             let intensity = 0.2 + 0.8 * brightness;
 
             // 255.0 value can be change to change the color of the object
-            let r = (255.0 * intensity) as u8;
-            let g = (255.0 * intensity) as u8;
-            let b = (255.0 * intensity) as u8;
+            let r = (base_color.r as f32 * intensity) as u8;
+            let g = (base_color.g as f32 * intensity) as u8;
+            let b = (base_color.b as f32 * intensity) as u8;
             let shaded_color = Color::new(r, g, b);
 
             if let (Some((x0, y0, w0)), Some((x1, y1, w1)), Some((x2, y2, w2))) = (screen[i0], screen[i1], screen[i2]) {

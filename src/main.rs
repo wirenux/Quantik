@@ -7,7 +7,9 @@ use camera::Camera;
 use glam::{Mat4, Quat, Vec3};
 use mesh::Mesh;
 use window::{AppWindow, Color, Framebuffer};
-use molecule::Molecule;
+use molecule::{cpk_color, Molecule};
+
+use crate::molecule::vdw_radius;
 
 const WIDTH: usize = 1280;
 const HEIGHT: usize = 720;
@@ -37,7 +39,7 @@ fn main() {
 
     let shift = -centroid; // move molecule centroid, so the camera can look at (0, 0, 0)
 
-    let sphere = Mesh::generate_uv_sphere(1.0, 24, 12);
+    let sphere = Mesh::generate_uv_sphere(1.0, 48, 24);
     let cylinder = Mesh::generate_cylinder(1.0, 1.0, 8);
 
     let mut camera = Camera::new(
@@ -70,13 +72,16 @@ fn main() {
         if needs_redraw {
             framebuffer.clear(Color::BLACK);
 
-            let atom_radius = 0.25;
             let bond_radius = 0.08;
 
             for atom in &mol.atoms {
+                let (r, g, b) = cpk_color(&atom.element);
+                let color = Color::new(r, g, b);
+                let radius = vdw_radius(&atom.element) * 0.25;
+
                 let model = Mat4::from_translation(atom.position + shift)
-                    * Mat4::from_scale(Vec3::splat(atom_radius));
-                sphere.draw(&mut framebuffer, model, &camera);
+                    * Mat4::from_scale(Vec3::splat(radius));
+                sphere.draw(&mut framebuffer, model, &camera, color);
             }
 
             for bond in &mol.bonds {
@@ -102,7 +107,7 @@ fn main() {
                     let model = Mat4::from_translation(mid+ prep * offset)
                         * Mat4::from_quat(rot)
                         * Mat4::from_scale(Vec3::new(bond_radius, len, bond_radius));
-                    cylinder.draw(&mut framebuffer, model, &camera);
+                    cylinder.draw(&mut framebuffer, model, &camera, Color { r: 255, g: 255, b: 255 });
                 }
             }
 
