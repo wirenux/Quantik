@@ -48,6 +48,8 @@ fn main() {
         100.0,
     );
 
+    camera.set_distance_bounds(max_r * 1.2, max_r * 8.0);
+
     let mut frames = 0u32;
     let mut last_print = std::time::Instant::now();
 

@@ -12,6 +12,8 @@ pub struct Camera {
     pub near: f32,
     pub far: f32,
     pub prev_mouse: Option<(f32, f32)>,
+    pub min_distance: f32,
+    pub max_distance: f32,
 }
 
 impl Camera {
@@ -26,6 +28,8 @@ impl Camera {
             near,
             far,
             prev_mouse: None,
+            min_distance: 0.1,
+            max_distance: 100.0,
         };
         cam.recompute_position();
         cam
@@ -42,6 +46,13 @@ impl Camera {
             self.distance * sp,
             self.distance * cp * cy,
         );
+    }
+
+    pub fn set_distance_bounds(&mut self, min: f32, max: f32) {
+        self.min_distance = min;
+        self.max_distance = max;
+        self.distance = self.distance.clamp(min, max);
+        self.recompute_position();
     }
 
     pub fn handle_input(&mut self, window: &AppWindow) -> bool {
@@ -71,7 +82,7 @@ impl Camera {
 
         if let Some((_, scroll_y)) = window.get_scroll_wheel() {
             self.distance *= 1.0 - scroll_y * 0.1;
-            self.distance = self.distance.clamp(4.5, 50.0);
+            self.distance = self.distance.clamp(self.min_distance, self.max_distance);
             changed = true;
         }
 
@@ -87,7 +98,7 @@ impl Camera {
         if changed {
             let max_pitch = 89.0_f32.to_radians();
             self.pitch = self.pitch.clamp(-max_pitch, max_pitch);
-            self.distance = self.distance.clamp(4.5, 50.0);
+            self.distance = self.distance.clamp(self.min_distance, self.max_distance);
             self.recompute_position();
         }
 
