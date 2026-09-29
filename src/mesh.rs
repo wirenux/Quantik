@@ -12,6 +12,7 @@ pub struct Vertex { // like a "3D point"
 #[derive(Debug)]
 pub struct Mesh {
     pub vertices: Vec<Vertex>, // table with all the position of all the point of the object
+    pub normals: Vec<Vec3>,
     pub indices: Vec<u32>, // table with int group by 3, each group point to some position in vertices to create a triangle
 }
 
@@ -30,6 +31,11 @@ impl Mesh {
             Vertex { position: Vec3::new( half,  half,  half) }, // 7 front-top-right
         ];
 
+        let normals: Vec<Vec3> = vertices
+            .iter()
+            .map(|v| v.position.normalize_or_zero())
+            .collect();
+
         let indices = vec![
             // Front face (z = +half)
             4, 5, 7,   7, 6, 4,
@@ -45,7 +51,7 @@ impl Mesh {
             0, 4, 6,   6, 2, 0,
         ];
 
-        Mesh { vertices, indices }
+        Mesh { vertices, normals, indices }
     }
 
     pub fn generate_uv_sphere(radius: f32, sectors: u32, stacks: u32) -> Self {
@@ -53,6 +59,7 @@ impl Mesh {
         let stacks = stacks.max(5);
 
         let mut vertices = Vec::new();
+        let mut normals = Vec::new();
 
         for i in 0..=stacks {
             let phi = PI * i as f32 / stacks as f32;
@@ -64,9 +71,9 @@ impl Mesh {
                 let x = r * tetha.cos();
                 let z = r * tetha.sin();
 
-                vertices.push(Vertex {
-                    position: Vec3::new(x, y, z),
-                });
+                let pos = Vec3::new(x, y, z);
+                vertices.push(Vertex { position: pos });
+                normals.push(pos.normalize());
             }
         }
 
@@ -83,7 +90,7 @@ impl Mesh {
             }
         }
 
-        Mesh { vertices, indices }
+        Mesh { vertices, normals, indices }
     }
 
     pub fn generate_cylinder(radius: f32, height: f32, segments: u32) -> Self {
@@ -91,16 +98,21 @@ impl Mesh {
         let half_h = height / 2.0;
 
         let mut vertices = Vec::new();
+        let mut normals = Vec::new();
 
         for j in 0..=segments {
             let theta = 2.0 * std::f32::consts::PI * j as f32 / segments as f32;
             let x = radius * theta.cos();
             let z = radius * theta.sin();
 
+            let n = Vec3::new(theta.cos(), 0.0, theta.sin());
+
             // bottom vertex
             vertices.push(Vertex { position: Vec3::new(x, -half_h, z) });
+            normals.push(n);
             // top vertex
             vertices.push(Vertex { position: Vec3::new(x, half_h, z) });
+            normals.push(n);
         }
 
         let mut indices = Vec::new();
@@ -115,7 +127,7 @@ impl Mesh {
             indices.extend_from_slice(&[bl, tl, tr]);
         }
 
-        Mesh { vertices, indices }
+        Mesh { vertices, normals, indices }
     }
 
     pub fn draw(&self, framebuffer: &mut Framebuffer, model: Mat4, camera: &Camera, base_color: Color) {
@@ -130,10 +142,27 @@ impl Mesh {
             .iter()
             .map(|v| (model * Vec4::from((v.position, 1.0))).xyz())
             .collect();
+        
+        let world_normals: Vec<Vec3> = self.normals
+            .iter()
+            .map(|n| (model * Vec4::from((*n, 0.0))).xyz().normalize_or_zero())
+            .collect();
 
         let screen: Vec<Option<(usize, usize, f32)>> = world
             .iter()
             .map(|&p| project_point(p, view_proj, width, height))
+            .collect();
+
+        let fill_dir = Vec3::new(-1.0, 0.3, -1.0).normalize();
+
+        let vertex_intensity: Vec<f32> = world_normals
+            .iter()
+            .map(|n| {
+                let key = n.dot(light_dir).max(0.0);
+                let fill = n.dot(fill_dir).max(0.0) * 0.3;
+                let brightness = (key + fill).min(1.0);
+                0.35 + 0.65 * brightness
+            })
             .collect();
 
         for chunk in self.indices.chunks(3) {
@@ -147,30 +176,33 @@ impl Mesh {
 
             let edge1 = v1 - v0;
             let edge2 = v2 - v0;
-            let n = edge1.cross(edge2);
+            let face_n = edge1.cross(edge2);
 
-            if n.length_squared() < 1e-12 {
+            if face_n.length_squared() < 1e-12 {
                 continue;
             }
 
-            let normal = n.normalize();
+            let face_normal = face_n.normalize();
             let view_dir = (camera.position - v0).normalize();
-            if normal.dot(view_dir) <= 0.0 {
+            if face_normal.dot(view_dir) <= 0.0 {
                 continue;
             }
-
-            let brightness = normal.dot(light_dir).max(0.0); // return 0 is value is negative
-            let intensity = 0.2 + 0.8 * brightness;
 
             // 255.0 value can be change to change the color of the object
-            let r = (base_color.r as f32 * intensity) as u8;
-            let g = (base_color.g as f32 * intensity) as u8;
-            let b = (base_color.b as f32 * intensity) as u8;
-            let shaded_color = Color::new(r, g, b);
+            // let r = (base_color.r as f32 * intensity) as u8;
+            // let g = (base_color.g as f32 * intensity) as u8;
+            // let b = (base_color.b as f32 * intensity) as u8;
+            // let shaded_color = Color::new(r, g, b);
 
             if let (Some((x0, y0, w0)), Some((x1, y1, w1)), Some((x2, y2, w2))) = (screen[i0], screen[i1], screen[i2]) {
-                framebuffer.draw_triangle((x0, y0), (x1, y1), (x2, y2), w0, w1, w2, shaded_color);
-                // framebuffer.draw_line_depth(x0 as i32, y0 as i32, x1 as i32, y1 as i32, w0, w1, Color::BLACK);
+                framebuffer.draw_triangle(
+                    (x0, y0), (x1, y1), (x2, y2),
+                    w0, w1, w2,
+                    vertex_intensity[i0],
+                    vertex_intensity[i1],
+                    vertex_intensity[i2],
+                    base_color,
+                );                // framebuffer.draw_line_depth(x0 as i32, y0 as i32, x1 as i32, y1 as i32, w0, w1, Color::BLACK);
                 // framebuffer.draw_line_depth(x1 as i32, y1 as i32, x2 as i32, y2 as i32, w1, w2, Color::BLACK);
                 // framebuffer.draw_line_depth(x2 as i32, y2 as i32, x0 as i32, y0 as i32, w2, w0, Color::BLACK);
             }

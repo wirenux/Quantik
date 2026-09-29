@@ -40,7 +40,7 @@ fn main() {
     let shift = -centroid; // move molecule centroid, so the camera can look at (0, 0, 0)
 
     let sphere = Mesh::generate_uv_sphere(1.0, 48, 24);
-    let cylinder = Mesh::generate_cylinder(1.0, 1.0, 8);
+    let cylinder = Mesh::generate_cylinder(1.0, 1.0, 16);
 
     let mut camera = Camera::new(
         Vec3::ZERO,

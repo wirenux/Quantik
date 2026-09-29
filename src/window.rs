@@ -163,12 +163,24 @@ impl Framebuffer {
         (c.0 - a.0) * (b.1 - a.1) - (c.1 - a.1) * (b.0 - a.0)
     }
 
-    pub fn draw_triangle(&mut self, p0: (usize, usize), p1: (usize, usize), p2: (usize, usize), d0: f32, d1: f32, d2: f32, color: Color) {
+    pub fn draw_triangle(
+        &mut self,
+        p0: (usize, usize), p1: (usize, usize), p2: (usize, usize),
+        d0: f32, d1: f32, d2: f32,
+        int0: f32, int1: f32, int2: f32,
+        base_color: Color,
+    ) {
         let min_x = p0.0.min(p1.0).min(p2.0);
         let max_x = p0.0.max(p1.0).max(p2.0).min(self.width - 1);
 
         let min_y = p0.1.min(p1.1).min(p2.1);
         let max_y = p0.1.max(p1.1).max(p2.1).min(self.height - 1);
+
+
+        // triangle inside the margin ring, so nothing to draw
+        if min_x > max_x || min_y > max_y {
+            return;
+        }
 
         let v0 = (p0.0 as f32, p0.1 as f32);
         let v1 = (p1.0 as f32, p1.1 as f32);
@@ -186,6 +198,10 @@ impl Framebuffer {
         let inv_d0 = 1.0 / d0;
         let inv_d1 = 1.0 / d1;
         let inv_d2 = 1.0 / d2;
+        
+        let i0d = int0 * inv_d0;
+        let i1d = int1 * inv_d1;
+        let i2d = int2 * inv_d2;
 
         let dw0_dx = v2.1 - v1.1;
         let dw0_dy = v1.0 - v2.0;
@@ -204,6 +220,7 @@ impl Framebuffer {
 
         let dinv_w_dx =
             (dw0_dx * inv_d0 + dw1_dx * inv_d1 + dw2_dx * inv_d2) * inv_area;
+        let di_sum_dx = (dw0_dx * i0d + dw1_dx * i1d + dw2_dx * i2d) * inv_area; 
 
         let jump_w0 = dw0_dy;
         let jump_w1 = dw1_dy;
@@ -211,6 +228,11 @@ impl Framebuffer {
 
         let area_positive = area > 0.0;
         let width = self.width;
+
+
+        let base_r = base_color.r as f32;
+        let base_g = base_color.g as f32;
+        let base_b = base_color.b as f32;
 
         // going trought every pixel in the "binding box"
         for y in min_y..=max_y {
@@ -220,6 +242,7 @@ impl Framebuffer {
 
             // recompute inv_w from the row starting w values each row.
             let mut inv_w = (w0 * inv_d0 + w1 * inv_d1 + w2 * inv_d2) * inv_area;
+            let mut i_sum = (w0 * i0d + w1 * i1d + w2 * i2d) * inv_area;
 
             let row_offset = y * width;
 
@@ -231,10 +254,17 @@ impl Framebuffer {
                 };
 
                 if is_inside {
-                    let depth = 1.0 / inv_w;
+                    let inv_inv_w = 1.0 / inv_w;
+                    let depth = inv_inv_w;
+                    let intensity = i_sum * inv_inv_w;
+
+                    let r = (base_r * intensity).clamp(0.0, 255.0) as u8;
+                    let g = (base_g * intensity).clamp(0.0, 255.0) as u8;
+                    let b = (base_b * intensity).clamp(0.0, 255.0) as u8;
+
                     let idx = row_offset + x;
                     if depth < self.depth[idx] {
-                        self.pixels[idx] = color;
+                        self.pixels[idx] = Color::new(r, g, b);
                         self.depth[idx] = depth;
                     }
                 }
@@ -243,6 +273,7 @@ impl Framebuffer {
                 w1 += dw1_dx;
                 w2 += dw2_dx;
                 inv_w += dinv_w_dx;
+                i_sum += di_sum_dx;
             }
 
             row_w0 += jump_w0;
