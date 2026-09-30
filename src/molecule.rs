@@ -17,6 +17,12 @@ pub struct Molecule {
     pub cid: usize,
 }
 
+pub const KNOWN_NAMES: &[(usize, &str)] = &[
+    (962, "Water"),
+    (2519, "Caffeine"),
+    (446220, "Cocaine"),
+];
+
 impl Molecule {
     pub fn from_sdf_file(path: &str) -> Result<Self, String> {
         let content = std::fs::read_to_string(path).map_err(|e| e.to_string())?;
@@ -103,4 +109,13 @@ pub fn vdw_radius(element: &str) -> f32 {
         "P" => 1.80,
         _   => 1.70,
     }
+}
+
+pub fn molecule_name(cid: usize) -> String {
+    for (known_cid, name) in KNOWN_NAMES {
+        if *known_cid == cid {
+            return name.to_string();
+        }
+    }
+    format!("CID {}", cid)
 }

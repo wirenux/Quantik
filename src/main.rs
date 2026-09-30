@@ -7,7 +7,7 @@ use camera::Camera;
 use glam::{Mat4, Quat, Vec3};
 use mesh::Mesh;
 use window::{AppWindow, Color, Framebuffer};
-use molecule::{cpk_color, Molecule};
+use molecule::{cpk_color, Molecule, molecule_name};
 
 use crate::molecule::vdw_radius;
 
@@ -16,9 +16,11 @@ const HEIGHT: usize = 720;
 
 fn main() {
     let mut framebuffer = Framebuffer::new(WIDTH, HEIGHT);
-    let mut window = AppWindow::new("Quantik - MOLECULE_NAME: CID", WIDTH, HEIGHT);
 
     let mol = Molecule::from_sdf_file("sdf/caffeine.sdf").expect("load failed");
+
+    let title = format!("Quantik - {} ({})", molecule_name(mol.cid), mol.cid);
+    let mut window = AppWindow::new(&title, WIDTH, HEIGHT);
 
     // DEV
     println!("CID: {}", mol.cid);
@@ -39,7 +41,7 @@ fn main() {
 
     let shift = -centroid; // move molecule centroid, so the camera can look at (0, 0, 0)
 
-    let sphere = Mesh::generate_uv_sphere(1.0, 32, 32);
+    let sphere = Mesh::generate_uv_sphere(1.0, 16, 16);
     let cylinder = Mesh::generate_cylinder(1.0, 1.0, 16);
 
     let mut camera = Camera::new(
