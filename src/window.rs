@@ -1,4 +1,4 @@
-use minifb::{Key, Window, WindowOptions, MouseButton, MouseMode};
+use minifb::{Key, MouseButton, MouseMode, Window, WindowOptions};
 use rayon::prelude::*;
 
 pub struct AppWindow {
@@ -22,7 +22,11 @@ pub struct Framebuffer {
 impl Color {
     pub const BLACK: Color = Color { r: 0, g: 0, b: 0 };
     pub const RED: Color = Color { r: 255, g: 0, b: 0 };
-    pub const WHITE: Color = Color { r: 255, g: 255, b: 255 };
+    pub const WHITE: Color = Color {
+        r: 255,
+        g: 255,
+        b: 255,
+    };
 
     pub fn new(r: u8, g: u8, b: u8) -> Self {
         Self { r, g, b }
@@ -32,7 +36,6 @@ impl Color {
         ((self.r as u32) << 16) | ((self.g as u32) << 8) | (self.b as u32)
     }
 }
-
 
 impl Framebuffer {
     pub fn new(width: usize, height: usize) -> Self {
@@ -136,7 +139,11 @@ impl Framebuffer {
 
         loop {
             if x0 >= 0 && x0 < self.width as i32 && y0 >= 0 && y0 < self.height as i32 {
-                let t = if total_steps > 0.0 { step / total_steps } else { 0.0 };
+                let t = if total_steps > 0.0 {
+                    step / total_steps
+                } else {
+                    0.0
+                };
                 let inv_w = (1.0 - t) / d0 + t / d1;
                 let depth = 1.0 / inv_w;
                 self.set_pixel_depth(x0 as usize, y0 as usize, color, depth);
@@ -165,9 +172,15 @@ impl Framebuffer {
 
     pub fn draw_triangle(
         &mut self,
-        p0: (usize, usize), p1: (usize, usize), p2: (usize, usize),
-        d0: f32, d1: f32, d2: f32,
-        int0: f32, int1: f32, int2: f32,
+        p0: (usize, usize),
+        p1: (usize, usize),
+        p2: (usize, usize),
+        d0: f32,
+        d1: f32,
+        d2: f32,
+        int0: f32,
+        int1: f32,
+        int2: f32,
         base_color: Color,
     ) {
         let min_x = p0.0.min(p1.0).min(p2.0);
@@ -175,7 +188,6 @@ impl Framebuffer {
 
         let min_y = p0.1.min(p1.1).min(p2.1);
         let max_y = p0.1.max(p1.1).max(p2.1).min(self.height - 1);
-
 
         // triangle inside the margin ring, so nothing to draw
         if min_x > max_x || min_y > max_y {
@@ -188,7 +200,7 @@ impl Framebuffer {
 
         // total area of the triangle
         let area = Self::edge_function(v0, v1, v2);
-    
+
         // if triangle is falt (null area), useless to draw it
         if area.abs() < 1e-6 {
             return;
@@ -198,7 +210,7 @@ impl Framebuffer {
         let inv_d0 = 1.0 / d0;
         let inv_d1 = 1.0 / d1;
         let inv_d2 = 1.0 / d2;
-        
+
         let i0d = int0 * inv_d0;
         let i1d = int1 * inv_d1;
         let i2d = int2 * inv_d2;
@@ -218,9 +230,8 @@ impl Framebuffer {
         let mut row_w1 = Self::edge_function(v2, v0, start);
         let mut row_w2 = Self::edge_function(v0, v1, start);
 
-        let dinv_w_dx =
-            (dw0_dx * inv_d0 + dw1_dx * inv_d1 + dw2_dx * inv_d2) * inv_area;
-        let di_sum_dx = (dw0_dx * i0d + dw1_dx * i1d + dw2_dx * i2d) * inv_area; 
+        let dinv_w_dx = (dw0_dx * inv_d0 + dw1_dx * inv_d1 + dw2_dx * inv_d2) * inv_area;
+        let di_sum_dx = (dw0_dx * i0d + dw1_dx * i1d + dw2_dx * i2d) * inv_area;
 
         let jump_w0 = dw0_dy;
         let jump_w1 = dw1_dy;
@@ -228,7 +239,6 @@ impl Framebuffer {
 
         let area_positive = area > 0.0;
         let width = self.width;
-
 
         let base_r = base_color.r as f32;
         let base_g = base_color.g as f32;
@@ -293,7 +303,8 @@ impl AppWindow {
                 resize: true,
                 ..WindowOptions::default()
             },
-        ).unwrap_or_else(|e| {
+        )
+        .unwrap_or_else(|e| {
             panic!("{}", e);
         });
 
@@ -310,7 +321,9 @@ impl AppWindow {
     }
 
     pub fn update_with_buffer(&mut self, buffer: &[u32], width: usize, height: usize) {
-        self.inner.update_with_buffer(buffer, width, height).unwrap();
+        self.inner
+            .update_with_buffer(buffer, width, height)
+            .unwrap();
     }
 
     pub fn is_key_down(&self, key: Key) -> bool {
@@ -322,7 +335,11 @@ impl AppWindow {
     }
 
     pub fn is_mouse_down(&self, left: bool) -> bool {
-        self.inner.get_mouse_down(if left {MouseButton::Left} else {MouseButton::Right})
+        self.inner.get_mouse_down(if left {
+            MouseButton::Left
+        } else {
+            MouseButton::Right
+        })
     }
 
     pub fn get_scroll_wheel(&self) -> Option<(f32, f32)> {

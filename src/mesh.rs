@@ -1,11 +1,12 @@
 use std::f32::consts::PI;
 
-use glam::{Mat4, Vec3, Vec4, Vec4Swizzles};
 use crate::camera::Camera;
 use crate::window::{Color, Framebuffer};
+use glam::{Mat4, Vec3, Vec4, Vec4Swizzles};
 
 #[derive(Debug, Clone, Copy)]
-pub struct Vertex { // like a "3D point"
+pub struct Vertex {
+    // like a "3D point"
     pub position: Vec3,
 }
 
@@ -21,14 +22,30 @@ impl Mesh {
         let half = size / 2.0;
 
         let vertices = vec![
-            Vertex { position: Vec3::new(-half, -half, -half) }, // 0 back-bottom-left
-            Vertex { position: Vec3::new( half, -half, -half) }, // 1 back-bottom-right
-            Vertex { position: Vec3::new(-half,  half, -half) }, // 2 back-top-left
-            Vertex { position: Vec3::new( half,  half, -half) }, // 3 back-top-right
-            Vertex { position: Vec3::new(-half, -half,  half) }, // 4 front-bottom-left
-            Vertex { position: Vec3::new( half, -half,  half) }, // 5 front-bottom-right
-            Vertex { position: Vec3::new(-half,  half,  half) }, // 6 front-top-left
-            Vertex { position: Vec3::new( half,  half,  half) }, // 7 front-top-right
+            Vertex {
+                position: Vec3::new(-half, -half, -half),
+            }, // 0 back-bottom-left
+            Vertex {
+                position: Vec3::new(half, -half, -half),
+            }, // 1 back-bottom-right
+            Vertex {
+                position: Vec3::new(-half, half, -half),
+            }, // 2 back-top-left
+            Vertex {
+                position: Vec3::new(half, half, -half),
+            }, // 3 back-top-right
+            Vertex {
+                position: Vec3::new(-half, -half, half),
+            }, // 4 front-bottom-left
+            Vertex {
+                position: Vec3::new(half, -half, half),
+            }, // 5 front-bottom-right
+            Vertex {
+                position: Vec3::new(-half, half, half),
+            }, // 6 front-top-left
+            Vertex {
+                position: Vec3::new(half, half, half),
+            }, // 7 front-top-right
         ];
 
         let normals: Vec<Vec3> = vertices
@@ -38,20 +55,19 @@ impl Mesh {
 
         let indices = vec![
             // Front face (z = +half)
-            4, 5, 7,   7, 6, 4,
-            // Back face (z = -half)
-            1, 0, 2,   2, 3, 1,
-            // Top face (y = +half)
-            6, 7, 3,   3, 2, 6,
-            // Bottom face (y = -half)
-            0, 1, 5,   5, 4, 0,
-            // Right face (x = +half)
-            5, 1, 3,   3, 7, 5,
-            // Left face (x = -half)
-            0, 4, 6,   6, 2, 0,
+            4, 5, 7, 7, 6, 4, // Back face (z = -half)
+            1, 0, 2, 2, 3, 1, // Top face (y = +half)
+            6, 7, 3, 3, 2, 6, // Bottom face (y = -half)
+            0, 1, 5, 5, 4, 0, // Right face (x = +half)
+            5, 1, 3, 3, 7, 5, // Left face (x = -half)
+            0, 4, 6, 6, 2, 0,
         ];
 
-        Mesh { vertices, normals, indices }
+        Mesh {
+            vertices,
+            normals,
+            indices,
+        }
     }
 
     pub fn generate_uv_sphere(radius: f32, sectors: u32, stacks: u32) -> Self {
@@ -90,7 +106,11 @@ impl Mesh {
             }
         }
 
-        Mesh { vertices, normals, indices }
+        Mesh {
+            vertices,
+            normals,
+            indices,
+        }
     }
 
     pub fn generate_cylinder(radius: f32, height: f32, segments: u32) -> Self {
@@ -108,10 +128,14 @@ impl Mesh {
             let n = Vec3::new(theta.cos(), 0.0, theta.sin());
 
             // bottom vertex
-            vertices.push(Vertex { position: Vec3::new(x, -half_h, z) });
+            vertices.push(Vertex {
+                position: Vec3::new(x, -half_h, z),
+            });
             normals.push(n);
             // top vertex
-            vertices.push(Vertex { position: Vec3::new(x, half_h, z) });
+            vertices.push(Vertex {
+                position: Vec3::new(x, half_h, z),
+            });
             normals.push(n);
         }
 
@@ -127,10 +151,20 @@ impl Mesh {
             indices.extend_from_slice(&[bl, tl, tr]);
         }
 
-        Mesh { vertices, normals, indices }
+        Mesh {
+            vertices,
+            normals,
+            indices,
+        }
     }
 
-    pub fn draw(&self, framebuffer: &mut Framebuffer, model: Mat4, camera: &Camera, base_color: Color) {
+    pub fn draw(
+        &self,
+        framebuffer: &mut Framebuffer,
+        model: Mat4,
+        camera: &Camera,
+        base_color: Color,
+    ) {
         let width = framebuffer.width;
         let height = framebuffer.height;
         let aspect_ratio = width as f32 / height as f32;
@@ -138,12 +172,14 @@ impl Mesh {
 
         let light_dir = Vec3::new(1.0, 3.0, 2.5).normalize(); // light position
 
-        let world: Vec<Vec3> = self.vertices
+        let world: Vec<Vec3> = self
+            .vertices
             .iter()
             .map(|v| (model * Vec4::from((v.position, 1.0))).xyz())
             .collect();
-        
-        let world_normals: Vec<Vec3> = self.normals
+
+        let world_normals: Vec<Vec3> = self
+            .normals
             .iter()
             .map(|n| (model * Vec4::from((*n, 0.0))).xyz().normalize_or_zero())
             .collect();
@@ -194,23 +230,34 @@ impl Mesh {
             // let b = (base_color.b as f32 * intensity) as u8;
             // let shaded_color = Color::new(r, g, b);
 
-            if let (Some((x0, y0, w0)), Some((x1, y1, w1)), Some((x2, y2, w2))) = (screen[i0], screen[i1], screen[i2]) {
+            if let (Some((x0, y0, w0)), Some((x1, y1, w1)), Some((x2, y2, w2))) =
+                (screen[i0], screen[i1], screen[i2])
+            {
                 framebuffer.draw_triangle(
-                    (x0, y0), (x1, y1), (x2, y2),
-                    w0, w1, w2,
+                    (x0, y0),
+                    (x1, y1),
+                    (x2, y2),
+                    w0,
+                    w1,
+                    w2,
                     vertex_intensity[i0],
                     vertex_intensity[i1],
                     vertex_intensity[i2],
                     base_color,
-                );                // framebuffer.draw_line_depth(x0 as i32, y0 as i32, x1 as i32, y1 as i32, w0, w1, Color::BLACK);
-                // framebuffer.draw_line_depth(x1 as i32, y1 as i32, x2 as i32, y2 as i32, w1, w2, Color::BLACK);
-                // framebuffer.draw_line_depth(x2 as i32, y2 as i32, x0 as i32, y0 as i32, w2, w0, Color::BLACK);
+                ); // framebuffer.draw_line_depth(x0 as i32, y0 as i32, x1 as i32, y1 as i32, w0, w1, Color::BLACK);
+                   // framebuffer.draw_line_depth(x1 as i32, y1 as i32, x2 as i32, y2 as i32, w1, w2, Color::BLACK);
+                   // framebuffer.draw_line_depth(x2 as i32, y2 as i32, x0 as i32, y0 as i32, w2, w0, Color::BLACK);
             }
         }
     }
 }
 
-pub fn project_point(point: Vec3, mvp: Mat4, width: usize, height: usize) -> Option<(usize, usize, f32)> {
+pub fn project_point(
+    point: Vec3,
+    mvp: Mat4,
+    width: usize,
+    height: usize,
+) -> Option<(usize, usize, f32)> {
     // convert 3D position (x, y, z) to homogeneous 4D coordinates (x, y, z, w=1.0)
     let point_4d = Vec4::from((point, 1.0));
     let clip_space = mvp * point_4d;

@@ -1,13 +1,13 @@
-mod window;
-mod mesh;
 mod camera;
+mod mesh;
 mod molecule;
+mod window;
 
 use camera::Camera;
 use glam::{Mat4, Quat, Vec3};
 use mesh::Mesh;
+use molecule::{cpk_color, molecule_name, Molecule};
 use window::{AppWindow, Color, Framebuffer};
-use molecule::{cpk_color, Molecule, molecule_name};
 
 use crate::molecule::vdw_radius;
 
@@ -32,10 +32,12 @@ fn main() {
     }
     // END OF DEV
 
-    let centroid: Vec3 = mol.atoms.iter().map(|a| a.position).sum::<Vec3>()
-        / mol.atoms.len() as f32; // average position of all the atoms
+    let centroid: Vec3 =
+        mol.atoms.iter().map(|a| a.position).sum::<Vec3>() / mol.atoms.len() as f32; // average position of all the atoms
 
-    let max_r = mol.atoms.iter()
+    let max_r = mol
+        .atoms
+        .iter()
         .map(|a| (a.position - centroid).length())
         .fold(0.0_f32, f32::max); // distance from the centroid to the farest atom
 
@@ -44,13 +46,7 @@ fn main() {
     let sphere = Mesh::generate_uv_sphere(1.0, 16, 16);
     let cylinder = Mesh::generate_cylinder(1.0, 1.0, 16);
 
-    let mut camera = Camera::new(
-        Vec3::ZERO,
-        max_r * 4.0,
-        60.0,
-        0.1,
-        100.0,
-    );
+    let mut camera = Camera::new(Vec3::ZERO, max_r * 4.0, 60.0, 0.1, 100.0);
 
     camera.set_distance_bounds(max_r * 1.2, max_r * 8.0);
 
@@ -106,10 +102,19 @@ fn main() {
                     // n = 3 : -0.15, +0.15 offset
                     let offset = (i as f32 - (n - 1.0) * 0.5) * spacing;
 
-                    let model = Mat4::from_translation(mid+ prep * offset)
+                    let model = Mat4::from_translation(mid + prep * offset)
                         * Mat4::from_quat(rot)
                         * Mat4::from_scale(Vec3::new(bond_radius, len, bond_radius));
-                    cylinder.draw(&mut framebuffer, model, &camera, Color { r: 255, g: 255, b: 255 });
+                    cylinder.draw(
+                        &mut framebuffer,
+                        model,
+                        &camera,
+                        Color {
+                            r: 255,
+                            g: 255,
+                            b: 255,
+                        },
+                    );
                 }
             }
 

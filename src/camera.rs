@@ -41,11 +41,12 @@ impl Camera {
         let cy = self.yaw.cos();
         let sy = self.yaw.sin();
 
-        self.position = self.target + Vec3::new(
-            self.distance * cp * sy,
-            self.distance * sp,
-            self.distance * cp * cy,
-        );
+        self.position = self.target
+            + Vec3::new(
+                self.distance * cp * sy,
+                self.distance * sp,
+                self.distance * cp * cy,
+            );
     }
 
     pub fn set_distance_bounds(&mut self, min: f32, max: f32) {
@@ -72,7 +73,7 @@ impl Camera {
 
                 let max_pitch = 89.0_f32.to_radians();
                 self.pitch = self.pitch.clamp(-max_pitch, max_pitch);
-                
+
                 changed = true;
             }
             self.prev_mouse = mouse;
@@ -87,18 +88,36 @@ impl Camera {
         }
 
         let speed = 0.02_f32;
-        if window.is_key_down(Key::Left)  { self.yaw   -= speed; changed = true; }
-        if window.is_key_down(Key::Right) { self.yaw   += speed; changed = true; }
-        if window.is_key_down(Key::Up)    { self.pitch += speed; changed = true; }
-        if window.is_key_down(Key::Down)  { self.pitch -= speed; changed = true; }
-        if window.is_key_down(Key::W)     { self.distance -= 0.1; changed = true; }
-        if window.is_key_down(Key::S)     { self.distance += 0.1; changed = true; }
+        if window.is_key_down(Key::Left) {
+            self.yaw -= speed;
+            changed = true;
+        }
+        if window.is_key_down(Key::Right) {
+            self.yaw += speed;
+            changed = true;
+        }
+        if window.is_key_down(Key::Up) {
+            self.pitch += speed;
+            changed = true;
+        }
+        if window.is_key_down(Key::Down) {
+            self.pitch -= speed;
+            changed = true;
+        }
+        if window.is_key_down(Key::W) {
+            self.distance -= 0.1;
+            changed = true;
+        }
+        if window.is_key_down(Key::S) {
+            self.distance += 0.1;
+            changed = true;
+        }
 
-        
         if changed {
             let max_pitch = 89.0_f32.to_radians();
             self.pitch = self.pitch.clamp(-max_pitch, max_pitch);
             self.distance = self.distance.clamp(self.min_distance, self.max_distance);
+            self.distance = self.distance.clamp(4.5, 50.0);
             self.recompute_position();
         }
 
@@ -108,13 +127,13 @@ impl Camera {
     pub fn view_matrix(&self) -> Mat4 {
         glam::camera::rh::view::look_at_mat4(self.position, self.target, Vec3::Y)
     }
-    
+
     pub fn projection_matrix(&self, aspect_ratio: f32) -> Mat4 {
         glam::camera::rh::proj::directx::perspective(
-            self.fov_degrees.to_radians(),  // fov
+            self.fov_degrees.to_radians(), // fov
             aspect_ratio,
-            self.near,                      // render distance (nearest)
-            self.far,                       // render distance (farest)
+            self.near, // render distance (nearest)
+            self.far,  // render distance (farest)
         )
     }
 }
