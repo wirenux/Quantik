@@ -7,6 +7,7 @@ use camera::Camera;
 use glam::{Mat4, Quat, Vec3};
 use mesh::Mesh;
 use molecule::{cpk_color, molecule_name, Molecule};
+use rfd::FileDialog;
 use window::{AppWindow, Color, Framebuffer};
 
 use crate::molecule::vdw_radius;
@@ -17,7 +18,12 @@ const HEIGHT: usize = 720;
 fn main() {
     let mut framebuffer = Framebuffer::new(WIDTH, HEIGHT);
 
-    let mol = Molecule::from_sdf_file("sdf/caffeine.sdf").expect("load failed");
+    let file = FileDialog::new()
+        .add_filter("sdf", &["sdf", "txt"])
+        .pick_file()
+        .expect("No file was selected");
+
+    let mol = Molecule::from_sdf_file(file.to_str().expect("Load failed")).expect("load failed");
 
     let title = format!("Quantik - {} ({})", molecule_name(mol.cid), mol.cid);
     let mut window = AppWindow::new(&title, WIDTH, HEIGHT);
