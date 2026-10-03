@@ -1,3 +1,4 @@
+use font8x8::{UnicodeFonts, BASIC_FONTS};
 use minifb::{Key, MouseButton, MouseMode, Window, WindowOptions};
 use rayon::prelude::*;
 
@@ -92,6 +93,44 @@ impl Framebuffer {
             self.depth = vec![f32::INFINITY; new_width * new_height];
             self.atom_ids = vec![usize::MAX; new_width * new_height];
         }
+    }
+
+    pub fn draw_rect(&mut self, x: usize, y: usize, w: usize, h: usize, color: Color) {
+        let x_end = (x + w).min(self.width);
+        let y_end = (y + h).min(self.height);
+        for yy in y..y_end {
+            for xx in x..x_end {
+                self.set_pixel(xx, yy, color);
+            }
+        }
+    }
+
+    pub fn draw_text(&mut self, x: usize, y: usize, text: &str, scale: usize, color: Color) {
+        let scale = scale.max(1);
+        let mut cursor_x = x;
+
+        for ch in text.chars() {
+            if let Some(glyph) = BASIC_FONTS.get(ch) {
+                for (row, byte) in glyph.iter().enumerate() {
+                    for col in 0..8 {
+                        if (byte >> col) & 1 == 1 {
+                            let px = cursor_x + col * scale;
+                            let py = y + row * scale;
+                            for dy in 0..scale {
+                                for dx in 0..scale {
+                                    self.set_pixel(px + dx, py + dy, color);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            cursor_x += 8 * scale;
+        }
+    }
+
+    pub fn text_width(text: &str) -> usize {
+        text.chars().count() * 8
     }
 
     pub fn draw_line(&mut self, mut x0: i32, mut y0: i32, x1: i32, y1: i32, color: Color) {

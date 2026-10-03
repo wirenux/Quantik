@@ -65,6 +65,8 @@ fn main() {
 
     let mut needs_redraw = true;
 
+    let mut last_hover: Option<usize> = None;
+
     while window.active() {
         let (current_width, current_height) = window.get_size();
 
@@ -76,6 +78,23 @@ fn main() {
         if camera.handle_input(&window) {
             needs_redraw = true;
         }
+
+        let mouse_pos = window.get_mouse_pos();
+        let hovered: Option<usize> = mouse_pos.and_then(|(mx, my)| {
+            let mx = mx as usize;
+            let my = my as usize;
+            if mx < framebuffer.width && my < framebuffer.height {
+                let idx = my * framebuffer.width + mx;
+                let atom_idx = framebuffer.atom_ids[idx];
+                if atom_idx != usize::MAX {
+                    Some(atom_idx)
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        });
 
         if needs_redraw {
             framebuffer.clear(Color::BLACK);
@@ -130,8 +149,34 @@ fn main() {
                 }
             }
 
+            if let (Some(idx), Some((mx, my))) = (last_hover, mouse_pos) {
+                let atom = &mol.atoms[idx];
+                let text = format!("{} #{}", atom.element, idx);
+
+                let pad = 4;
+                let scale = 2;
+                let text_w = Framebuffer::text_width(&text) * 2;
+                let text_h = 16;
+                let box_w = text_w + pad * 2;
+                let box_h = text_h + pad * 2;
+
+                let ox = (mx as usize).saturating_add(12);
+                let oy = (my as usize).saturating_add(12);
+
+                let bx = ox.min(framebuffer.width.saturating_sub(box_w));
+                let by = oy.min(framebuffer.height.saturating_sub(box_h));
+
+                framebuffer.draw_rect(bx, by, box_w, box_h, Color::new(30, 30, 30));
+                framebuffer.draw_text(bx + pad, by + pad, &text, scale, Color::WHITE);
+            }
+
             needs_redraw = false;
             frames += 1;
+        }
+
+        if hovered != last_hover {
+            needs_redraw = true;
+            last_hover = hovered;
         }
 
         let buffer = framebuffer.to_u32_buffer();
@@ -143,20 +188,20 @@ fn main() {
             frames = 0;
             last_print = now;
 
-            if let Some((mouse_x, mouse_y)) = window.get_mouse_pos() {
-                let mx = mouse_x as usize;
-                let my = mouse_y as usize;
-
-                if mx < framebuffer.width && my < framebuffer.height {
-                    let pixel_index = my * framebuffer.width + mx;
-                    let atom_idx = framebuffer.atom_ids[pixel_index];
-
-                    if atom_idx != usize::MAX {
-                        let hovered_atom = &mol.atoms[atom_idx];
-                        println!("Atom:{} ID:{}", hovered_atom.element, atom_idx);
-                    }
-                }
-            }
+            //if let Some((mouse_x, mouse_y)) = window.get_mouse_pos() {
+            //    let mx = mouse_x as usize;
+            //    let my = mouse_y as usize;
+            //
+            //    if mx < framebuffer.width && my < framebuffer.height {
+            //        let pixel_index = my * framebuffer.width + mx;
+            //        let atom_idx = framebuffer.atom_ids[pixel_index];
+            //
+            //        if atom_idx != usize::MAX {
+            //            let hovered_atom = &mol.atoms[atom_idx];
+            //            println!("Atom:{} ID:{}", hovered_atom.element, atom_idx);
+            //        }
+            //    }
+            //}
         }
     }
 }

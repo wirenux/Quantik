@@ -28,7 +28,7 @@
 - [x] Rasterizer: 3D triangle -> 2D pixel buffer (color + depth per pixel)
 - [x] Depth buffer (z-buffer) for corrent occlusion between atoms/bonds
 - [x] Basic shading (diffuse light + ambient light)
-- [ ] ID buffer (alongside the depth buffer): tags each pixel with the atoms it belongs to (for tooltip)
+- [x] ID buffer (alongside the depth buffer): tags each pixel with the atoms it belongs to (for tooltip)
 
 ## Camera
 
@@ -42,13 +42,12 @@
 - [x] Window title with the name of the molecule / atoms and the CID (e.g: "`Quantik - Water: 962`")
 - [ ] macOS menu with keyboard shortcut
 - [ ] Menu to select molecule (or just a file opener for .sdf)
-- [ ] Use GPU
+- [-] Use GPU
 
 ### Mouse click / integration
 
-- [ ] Crossterm mouse event handling wired into ratatui event loop
 - [ ] Tooltip
-    - [ ] Atom name + ID on hover (e.g: `O(1)`)
+    - [x] Atom name + ID on hover (e.g: `O #1`)
 
 ## Order
 
@@ -65,4 +64,4 @@
 - [x] Maybe use minifb instead of Ratatui to get a simple window like "black" (on github)
 - [ ] The minifb advantage is the macOS top bar can be switch to a windows/linux "in window" top bar
 - [ ] since minifb can't add top bar to linux -> rely on shortcut
-- [ ] Add a text in the buffer to say that a file must be selected to run the program (behind the file selector)
+- [ ] Add a text in the buffer to say that a file must be selected to run the program (behind the file selector) (with the draw_text func)
