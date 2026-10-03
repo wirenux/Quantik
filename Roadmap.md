@@ -52,6 +52,7 @@
     - [x] Atom name + ID on hover (e.g: `O #1`)
     - [x] Trivial name : `Carbon (C)`
     - [x] VDW radius
+    - [ ] Molar mass
 
 ## Order
 

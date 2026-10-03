@@ -85,7 +85,7 @@ impl Molecule {
 pub fn atom_name(element: &str) -> String {
     let name = match element {
         "H" => "Hydrogen",
-        "C" => "Carbone",
+        "C" => "Carbon",
         "N" => "Nitrogen",
         "O" => "Oxygen",
         "S" => "Sulfur",
