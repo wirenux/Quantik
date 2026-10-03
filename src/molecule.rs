@@ -82,6 +82,19 @@ impl Molecule {
     }
 }
 
+pub fn atom_name(element: &str) -> String {
+    let name = match element {
+        "H" => "Hydrogen",
+        "C" => "Carbone",
+        "N" => "Nitrogen",
+        "O" => "Oxygen",
+        "S" => "Sulfur",
+        "P" => "Phosphorus",
+        _ => "Unknown",
+    };
+    name.to_string()
+}
+
 pub fn cpk_color(element: &str) -> (u8, u8, u8) {
     match element {
         "H" => (255, 255, 255),

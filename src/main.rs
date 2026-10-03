@@ -10,7 +10,7 @@ use molecule::{cpk_color, molecule_name, Molecule};
 use rfd::FileDialog;
 use window::{AppWindow, Color, Framebuffer};
 
-use crate::molecule::vdw_radius;
+use crate::molecule::{atom_name, vdw_radius};
 
 const WIDTH: usize = 1280;
 const HEIGHT: usize = 720;
@@ -31,7 +31,7 @@ fn main() {
     // DEV
     println!("CID: {}", mol.cid);
     for (i, a) in mol.atoms.iter().enumerate() {
-        println!("atom {}: {} at {:?}", i, a.element, a.position);
+        println!("atom {}: {} @ {:?}", i, a.element, a.position);
     }
     for b in &mol.bonds {
         println!("bond {} - {} (order {})", b.a, b.b, b.order);
@@ -39,7 +39,6 @@ fn main() {
     if let Some((mouse_x, mouse_y)) = window.get_mouse_pos() {
         println!("{} - {}", mouse_x, mouse_y);
     }
-
     // END OF DEV
 
     let centroid: Vec3 =
@@ -151,14 +150,20 @@ fn main() {
 
             if let (Some(idx), Some((mx, my))) = (last_hover, mouse_pos) {
                 let atom = &mol.atoms[idx];
-                let text = format!("{} #{}", atom.element, idx);
+                let main_text = format!("{} ({}) #{}", atom_name(&atom.element), atom.element, idx);
+                let atom_radius_text =
+                    format!("Radius: {} A", vdw_radius(&atom.element.to_string()));
 
                 let pad = 4;
                 let scale = 2;
-                let text_w = Framebuffer::text_width(&text) * 2;
+
+                let main_text_w = Framebuffer::text_width(&main_text) * scale;
+                let atom_radius_text_w = Framebuffer::text_width(&atom_radius_text) * scale;
+                let text_w = main_text_w.max(atom_radius_text_w); // get biggest number b/w main_text_w & atom_radius_text_w
+
                 let text_h = 16;
                 let box_w = text_w + pad * 2;
-                let box_h = text_h + pad * 2;
+                let box_h = text_h + pad * 6;
 
                 let ox = (mx as usize).saturating_add(12);
                 let oy = (my as usize).saturating_add(12);
@@ -166,8 +171,18 @@ fn main() {
                 let bx = ox.min(framebuffer.width.saturating_sub(box_w));
                 let by = oy.min(framebuffer.height.saturating_sub(box_h));
 
+                let line_h = 8 * scale + 2;
+
                 framebuffer.draw_rect(bx, by, box_w, box_h, Color::new(30, 30, 30));
-                framebuffer.draw_text(bx + pad, by + pad, &text, scale, Color::WHITE);
+
+                framebuffer.draw_text(bx + pad, by + pad, &main_text, scale, Color::WHITE);
+                framebuffer.draw_text(
+                    bx + pad,
+                    by + pad + line_h,
+                    &atom_radius_text,
+                    scale,
+                    Color::WHITE,
+                );
             }
 
             needs_redraw = false;

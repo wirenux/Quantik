@@ -34,6 +34,8 @@
 
 - [x] Camera position / orientation state
 - [x] Orbit control: drag to rotate, scroll to zoom
+- [ ] Press `R` to make if rotate automatically
+    - [ ] `+` and `-` to speed up or slow down the rotate speed
 
 ## minifb
 
@@ -46,8 +48,10 @@
 
 ### Mouse click / integration
 
-- [ ] Tooltip
+- [ ] Tooltip #a
     - [x] Atom name + ID on hover (e.g: `O #1`)
+    - [x] Trivial name : `Carbon (C)`
+    - [x] VDW radius
 
 ## Order
 
@@ -55,7 +59,7 @@
 - [x] Add camera (control)
 - [x] Add z-buffer
 - [x] Add 2nd sphere + cylinder
-- [ ] Add ID Buffer + hover tooltip
+- [x] Add ID Buffer + hover tooltip
 - [x] Parse a .sdf
 - [x] Render a .sdf
 
