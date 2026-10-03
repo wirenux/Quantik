@@ -36,6 +36,10 @@ fn main() {
     for b in &mol.bonds {
         println!("bond {} - {} (order {})", b.a, b.b, b.order);
     }
+    if let Some((mouse_x, mouse_y)) = window.get_mouse_pos() {
+        println!("{} - {}", mouse_x, mouse_y);
+    }
+
     // END OF DEV
 
     let centroid: Vec3 =
@@ -78,14 +82,15 @@ fn main() {
 
             let bond_radius = 0.08;
 
-            for atom in &mol.atoms {
+            for (index, atom) in mol.atoms.iter().enumerate() {
                 let (r, g, b) = cpk_color(&atom.element);
                 let color = Color::new(r, g, b);
                 let radius = vdw_radius(&atom.element) * 0.25;
 
                 let model = Mat4::from_translation(atom.position + shift)
                     * Mat4::from_scale(Vec3::splat(radius));
-                sphere.draw(&mut framebuffer, model, &camera, color);
+
+                sphere.draw(&mut framebuffer, model, &camera, color, index);
             }
 
             for bond in &mol.bonds {
@@ -120,6 +125,7 @@ fn main() {
                             g: 255,
                             b: 255,
                         },
+                        usize::MAX,
                     );
                 }
             }
@@ -136,6 +142,21 @@ fn main() {
             println!("FPS: {}", frames);
             frames = 0;
             last_print = now;
+
+            if let Some((mouse_x, mouse_y)) = window.get_mouse_pos() {
+                let mx = mouse_x as usize;
+                let my = mouse_y as usize;
+
+                if mx < framebuffer.width && my < framebuffer.height {
+                    let pixel_index = my * framebuffer.width + mx;
+                    let atom_idx = framebuffer.atom_ids[pixel_index];
+
+                    if atom_idx != usize::MAX {
+                        let hovered_atom = &mol.atoms[atom_idx];
+                        println!("Atom:{} ID:{}", hovered_atom.element, atom_idx);
+                    }
+                }
+            }
         }
     }
 }

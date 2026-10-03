@@ -164,6 +164,7 @@ impl Mesh {
         model: Mat4,
         camera: &Camera,
         base_color: Color,
+        atom_id: usize,
     ) {
         let width = framebuffer.width;
         let height = framebuffer.height;
@@ -244,6 +245,7 @@ impl Mesh {
                     vertex_intensity[i1],
                     vertex_intensity[i2],
                     base_color,
+                    atom_id,
                 ); // framebuffer.draw_line_depth(x0 as i32, y0 as i32, x1 as i32, y1 as i32, w0, w1, Color::BLACK);
                    // framebuffer.draw_line_depth(x1 as i32, y1 as i32, x2 as i32, y2 as i32, w1, w2, Color::BLACK);
                    // framebuffer.draw_line_depth(x2 as i32, y2 as i32, x0 as i32, y0 as i32, w2, w0, Color::BLACK);

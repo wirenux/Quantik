@@ -17,6 +17,7 @@ pub struct Framebuffer {
     pub height: usize,
     pub pixels: Vec<Color>,
     pub depth: Vec<f32>,
+    pub atom_ids: Vec<usize>,
 }
 
 impl Color {
@@ -44,12 +45,14 @@ impl Framebuffer {
             height,
             pixels: vec![Color::BLACK; width * height],
             depth: vec![f32::INFINITY; width * height],
+            atom_ids: vec![usize::MAX; width * height],
         }
     }
 
     pub fn clear(&mut self, color: Color) {
         self.pixels.fill(color);
         self.depth.fill(f32::INFINITY);
+        self.atom_ids.fill(usize::MAX);
     }
 
     pub fn set_pixel(&mut self, x: usize, y: usize, color: Color) {
@@ -87,6 +90,7 @@ impl Framebuffer {
             self.height = new_height;
             self.pixels = vec![Color::BLACK; new_width * new_height];
             self.depth = vec![f32::INFINITY; new_width * new_height];
+            self.atom_ids = vec![usize::MAX; new_width * new_height];
         }
     }
 
@@ -182,6 +186,7 @@ impl Framebuffer {
         int1: f32,
         int2: f32,
         base_color: Color,
+        atom_id: usize,
     ) {
         let min_x = p0.0.min(p1.0).min(p2.0);
         let max_x = p0.0.max(p1.0).max(p2.0).min(self.width - 1);
@@ -266,16 +271,17 @@ impl Framebuffer {
                 if is_inside {
                     let inv_inv_w = 1.0 / inv_w;
                     let depth = inv_inv_w;
-                    let intensity = i_sum * inv_inv_w;
-
-                    let r = (base_r * intensity).clamp(0.0, 255.0) as u8;
-                    let g = (base_g * intensity).clamp(0.0, 255.0) as u8;
-                    let b = (base_b * intensity).clamp(0.0, 255.0) as u8;
 
                     let idx = row_offset + x;
                     if depth < self.depth[idx] {
+                        let intensity = i_sum * inv_inv_w;
+                        let r = (base_r * intensity).clamp(0.0, 255.0) as u8;
+                        let g = (base_g * intensity).clamp(0.0, 255.0) as u8;
+                        let b = (base_b * intensity).clamp(0.0, 255.0) as u8;
+
                         self.pixels[idx] = Color::new(r, g, b);
                         self.depth[idx] = depth;
+                        self.atom_ids[idx] = atom_id;
                     }
                 }
 
