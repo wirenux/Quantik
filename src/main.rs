@@ -151,6 +151,8 @@ fn main() {
             if let (Some(idx), Some((mx, my))) = (last_hover, mouse_pos) {
                 let atom = &mol.atoms[idx];
                 let main_text = format!("{} ({}) #{}", atom_name(&atom.element), atom.element, idx);
+
+                // space is used for indentation in the tooltip
                 let atom_radius_text =
                     format!(" Radius: {} A", vdw_radius(&atom.element.to_string()));
                 let molar_mass_text =
