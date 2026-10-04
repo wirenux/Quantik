@@ -69,6 +69,15 @@
         - [ ] Number of bound
         - [ ] Number of atoms
 
+### Startpage
+
+- [ ] Title : `Quantik`
+- [ ] No 3d render for now
+- [ ] Menu/button to open the file selector
+- [ ] Erase FB
+- [ ] Change title to : `Quantik - Water (CID: 962)`
+- [ ] Render molecule and everything else
+
 ## Order
 
 - [x] Render a static sphere
