@@ -34,8 +34,10 @@
 
 - [x] Camera position / orientation state
 - [x] Orbit control: drag to rotate, scroll to zoom
-- [ ] Press `R` to make if rotate automatically
+- [ ] Press `Space` to make if rotate automatically
     - [ ] `+` and `-` to speed up or slow down the rotate speed
+- [ ] Add pan with right click drag
+- [ ] Press `R` to reset camera positon angle etc...
 
 ## minifb
 
@@ -48,11 +50,24 @@
 
 ### Mouse click / integration
 
-- [ ] Tooltip #a
+- [x] Tooltip :
     - [x] Atom name + ID on hover (e.g: `O #1`)
     - [x] Trivial name : `Carbon (C)`
     - [x] VDW radius
-    - [ ] Molar mass
+    - [x] Molar mass
+    - [x] Different color for atom name
+    - [x] Indentation for the info
+    - [x] White border
+
+### UI
+
+- [ ] A box with the name and info of the molecule (top-left corner)
+    - Important Info
+        - [ ] Molecule name & CID : `Water (CID: 962)`
+        - [ ] Molar mass
+    - Other info (open with a key press or a menu item on macos and windows)
+        - [ ] Number of bound
+        - [ ] Number of atoms
 
 ## Order
 
