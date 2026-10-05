@@ -34,10 +34,10 @@
 
 - [x] Camera position / orientation state
 - [x] Orbit control: drag to rotate, scroll to zoom
-- [ ] Press `Space` to make if rotate automatically
-    - [ ] `+` and `-` to speed up or slow down the rotate speed
-- [ ] Add pan with right click drag
-- [ ] Press `R` to reset camera positon angle etc...
+- [x] Press `Space` to make if rotate automatically
+    - [x] `+` and `-` to zoom in or out (like `W` and `S`)
+- [x] Add pan with right click drag
+- [x] Press `R` to reset camera positon angle etc...
 
 ## minifb
 
@@ -78,11 +78,7 @@
 - [ ] Change title to : `Quantik - Water (CID: 962)`
 - [ ] Render molecule and everything else
 
-## Idea
 
-- [ ] French/English toggle
-- [ ] Make a menu or something else to get the molecule file and open it
-- [ ] Also maybe create a list of molecule implemented in the program
 
 ## Order
 
@@ -100,3 +96,12 @@
 - [ ] The minifb advantage is the macOS top bar can be switch to a windows/linux "in window" top bar
 - [ ] since minifb can't add top bar to linux -> rely on shortcut
 - [ ] Add a text in the buffer to say that a file must be selected to run the program (behind the file selector) (with the draw_text func)
+
+- [ ] French/English toggle
+- [ ] Make a menu or something else to get the molecule file and open it
+- [ ] Also maybe create a list of molecule implemented in the program
+
+## Other
+
+
+Fun fact: when you press `Space` the molecule rotate (in reality it's the camera) and it also help me to know how much much i want having (since i calculate FPS when the framebuffer/screen is changing)

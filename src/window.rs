@@ -375,6 +375,10 @@ impl AppWindow {
         self.inner.is_key_down(key)
     }
 
+    pub fn is_key_pressed(&self, key: Key) -> bool {
+        self.inner.is_key_pressed(key, minifb::KeyRepeat::No)
+    }
+
     pub fn get_mouse_pos(&self) -> Option<(f32, f32)> {
         self.inner.get_mouse_pos(MouseMode::Discard)
     }
