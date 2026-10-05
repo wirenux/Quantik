@@ -64,7 +64,7 @@
 - [ ] A box with the name and info of the molecule (top-left corner)
     - Important Info
         - [ ] Molecule name & CID : `Water (CID: 962)`
-        - [ ] Molar mass
+        - [ ] Molar mass of molecule
     - Other info (open with a key press or a menu item on macos and windows)
         - [ ] Number of bound
         - [ ] Number of atoms
@@ -77,6 +77,12 @@
 - [ ] Erase FB
 - [ ] Change title to : `Quantik - Water (CID: 962)`
 - [ ] Render molecule and everything else
+
+## Idea
+
+- [ ] French/English toggle
+- [ ] Make a menu or something else to get the molecule file and open it
+- [ ] Also maybe create a list of molecule implemented in the program
 
 ## Order
 
