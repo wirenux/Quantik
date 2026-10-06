@@ -18,6 +18,7 @@ pub struct Mesh {
 }
 
 impl Mesh {
+    #[allow(dead_code)]
     pub fn generate_cube(size: f32) -> Self {
         let half = size / 2.0;
 

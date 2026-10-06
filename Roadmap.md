@@ -78,8 +78,6 @@
 - [ ] Change title to : `Quantik - Water (CID: 962)`
 - [ ] Render molecule and everything else
 
-
-
 ## Order
 
 - [x] Render a static sphere
@@ -89,6 +87,10 @@
 - [x] Add ID Buffer + hover tooltip
 - [x] Parse a .sdf
 - [x] Render a .sdf
+
+## BUG
+
+- [ ] When the base of a bound get outside of the screen the cylinder move (or look like it's moving)
 
 ## Idea
 

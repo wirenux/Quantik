@@ -17,8 +17,14 @@ pub struct Molecule {
     pub cid: usize,
 }
 
-pub const KNOWN_NAMES: &[(usize, &str)] =
-    &[(962, "Water"), (2519, "Caffeine"), (446220, "Cocaine")];
+pub const KNOWN_NAMES: &[(usize, &str)] = &[
+    (962, "Water"),
+    (2519, "Caffeine"),
+    (446220, "Cocaine"),
+    (155903693, "Vitamin C"),
+    (297, "Methane"),
+    (222, "Ammonia"),
+];
 
 impl Molecule {
     pub fn from_sdf_file(path: &str) -> Result<Self, String> {
