@@ -1,9 +1,12 @@
 use font8x8::{UnicodeFonts, BASIC_FONTS};
-use minifb::{Key, MouseButton, MouseMode, Window, WindowOptions};
+use minifb::{
+    Key, Menu, MouseButton, MouseMode, Window, WindowOptions, MENU_KEY_COMMAND, MENU_KEY_CTRL,
+};
 use rayon::prelude::*;
 
 pub struct AppWindow {
     inner: Window,
+    menu_handle: Option<minifb::MenuHandle>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -354,7 +357,21 @@ impl AppWindow {
         });
 
         window.set_target_fps(120);
-        Self { inner: window }
+
+        let window_menu = Menu::new("Window").unwrap();
+        let _window_handle = window.add_menu(&window_menu);
+
+        let mut menu = Menu::new("File").unwrap();
+        menu.add_item("Open...", 1) // ID 1 for Open
+            .shortcut(Key::O, MENU_KEY_CTRL) // ctrl even for macOS 'cause minifb make the change
+            .build();
+
+        let menu_handle = Some(window.add_menu(&menu));
+
+        Self {
+            inner: window,
+            menu_handle,
+        }
     }
 
     pub fn active(&self) -> bool {
@@ -393,5 +410,13 @@ impl AppWindow {
 
     pub fn get_scroll_wheel(&self) -> Option<(f32, f32)> {
         self.inner.get_scroll_wheel()
+    }
+
+    pub fn set_title(&mut self, title: &str) {
+        self.inner.set_title(title);
+    }
+
+    pub fn is_menu_pressed(&mut self) -> Option<usize> {
+        self.inner.is_menu_pressed()
     }
 }

@@ -172,7 +172,6 @@ impl Camera {
             let max_pitch = 89.0_f32.to_radians();
             self.pitch = self.pitch.clamp(-max_pitch, max_pitch);
             self.distance = self.distance.clamp(self.min_distance, self.max_distance);
-            self.distance = self.distance.clamp(4.5, 50.0);
             self.recompute_position();
         }
 

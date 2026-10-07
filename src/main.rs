@@ -23,7 +23,8 @@ fn main() {
         .pick_file()
         .expect("No file was selected");
 
-    let mol = Molecule::from_sdf_file(file.to_str().expect("Load failed")).expect("load failed");
+    let mut mol =
+        Molecule::from_sdf_file(file.to_str().expect("Load failed")).expect("load failed");
 
     let title = format!("Quantik - {} ({})", molecule_name(mol.cid), mol.cid);
     let mut window = AppWindow::new(&title, WIDTH, HEIGHT);
@@ -50,7 +51,7 @@ fn main() {
         .map(|a| (a.position - centroid).length())
         .fold(0.0_f32, f32::max); // distance from the centroid to the farest atom
 
-    let shift = -centroid; // move molecule centroid, so the camera can look at (0, 0, 0)
+    let mut shift = -centroid; // move molecule centroid, so the camera can look at (0, 0, 0)
 
     let sphere = Mesh::generate_uv_sphere(1.0, 16, 16);
     let cylinder = Mesh::generate_cylinder(1.0, 1.0, 16);
@@ -67,6 +68,38 @@ fn main() {
     let mut last_hover: Option<usize> = None;
 
     while window.active() {
+        if let Some(menu_id) = window.is_menu_pressed() {
+            if menu_id == 1 {
+                if let Some(file) = FileDialog::new()
+                    .add_filter("SDF File", &["sdf", "txt"])
+                    .pick_file()
+                {
+                    if let Ok(new_mol) = Molecule::from_sdf_file(file.to_str().unwrap_or("")) {
+                        mol = new_mol;
+
+                        let centroid: Vec3 = mol.atoms.iter().map(|a| a.position).sum::<Vec3>()
+                            / mol.atoms.len() as f32;
+                        shift = -centroid;
+
+                        let max_r = mol
+                            .atoms
+                            .iter()
+                            .map(|a| (a.position - centroid).length())
+                            .fold(0.0_f32, f32::max);
+
+                        camera = Camera::new(Vec3::ZERO, max_r * 4.0, 60.0, 0.1, 100.0);
+                        camera.set_distance_bounds(max_r * 1.2, max_r * 8.0);
+
+                        let title = format!("Quantik - {} ({})", molecule_name(mol.cid), mol.cid);
+                        window.set_title(&title);
+
+                        last_hover = None;
+                        needs_redraw = true;
+                    }
+                }
+            }
+        }
+
         let (current_width, current_height) = window.get_size();
 
         if framebuffer.width != current_width || framebuffer.height != current_height {
@@ -221,21 +254,6 @@ fn main() {
             println!("FPS: {}", frames);
             frames = 0;
             last_print = now;
-
-            //if let Some((mouse_x, mouse_y)) = window.get_mouse_pos() {
-            //    let mx = mouse_x as usize;
-            //    let my = mouse_y as usize;
-            //
-            //    if mx < framebuffer.width && my < framebuffer.height {
-            //        let pixel_index = my * framebuffer.width + mx;
-            //        let atom_idx = framebuffer.atom_ids[pixel_index];
-            //
-            //        if atom_idx != usize::MAX {
-            //            let hovered_atom = &mol.atoms[atom_idx];
-            //            println!("Atom:{} ID:{}", hovered_atom.element, atom_idx);
-            //        }
-            //    }
-            //}
         }
     }
 }
