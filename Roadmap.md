@@ -35,7 +35,7 @@
 - [x] Camera position / orientation state
 - [x] Orbit control: drag to rotate, scroll to zoom
 - [x] Press `Space` to make if rotate automatically
-    - [x] `+` and `-` to zoom in or out (like `W` and `S`)
+    - [x] `+` and `-` to speed the rotate speed
 - [x] Add pan with right click drag
 - [x] Press `R` to reset camera positon angle etc...
 
@@ -108,3 +108,4 @@
 
 
 Fun fact: when you press `Space` the molecule rotate (in reality it's the camera) and it also help me to know how much much i want having (since i calculate FPS when the framebuffer/screen is changing)
+Keyboard shortcut don't work on Linux (at least xfce w/ X11)

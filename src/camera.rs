@@ -16,6 +16,7 @@ pub struct Camera {
     pub min_distance: f32,
     pub max_distance: f32,
     pub auto_rotate: bool,
+    pub auto_rotate_speed: f32,
 }
 
 impl Camera {
@@ -34,6 +35,7 @@ impl Camera {
             min_distance: 0.1,
             max_distance: 100.0,
             auto_rotate: false,
+            auto_rotate_speed: 0.01,
         };
         cam.recompute_position();
         cam
@@ -138,12 +140,20 @@ impl Camera {
             self.pitch -= speed;
             changed = true;
         }
-        if window.is_key_down(Key::W) || window.is_key_down(Key::Equal) {
+        if window.is_key_down(Key::W) {
             self.distance -= 0.1;
             changed = true;
         }
-        if window.is_key_down(Key::S) || window.is_key_down(Key::Minus) {
+        if window.is_key_down(Key::S) {
             self.distance += 0.1;
+            changed = true;
+        }
+        if window.is_key_down(Key::Minus) {
+            self.auto_rotate_speed /= 1.05;
+            changed = true;
+        }
+        if window.is_key_down(Key::Equal) {
+            self.auto_rotate_speed *= 1.05;
             changed = true;
         }
         if window.is_key_pressed(Key::Space) {
@@ -164,7 +174,7 @@ impl Camera {
         }
 
         if self.auto_rotate {
-            self.yaw += 0.01;
+            self.yaw += self.auto_rotate_speed;
             changed = true;
         }
 
