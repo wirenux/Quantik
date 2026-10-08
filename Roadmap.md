@@ -15,7 +15,7 @@
     - Find CID : `curl https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/water/property/IUPACName/JSON`
 - [x] Parse `.sdf`
     - [SDF File Format](./SDF.md)
-- [ ] Element table : symbol, atomic radius, CPK Color
+- [x] Element table : symbol, atomic radius, CPK Color
 
 ## Meshes
 
@@ -64,11 +64,14 @@
 
 - [ ] A box with the name and info of the molecule (top-left corner)
     - Important Info
-        - [ ] Molecule name & CID : `Water (CID: 962)`
-        - [ ] Molar mass of molecule
+        - [x] Molecule name & CID : `Water (CID: 962)`
+        - [ ] Formula
+            - [x] Classic Way
+            - [ ] With height offset
+        - [x] Molar mass of molecule
     - Other info (open with a key press or a menu item on macos and windows)
-        - [ ] Number of bound
-        - [ ] Number of atoms
+        - [x] Number of bound
+        - [x] Number of atoms
 
 ### Startpage
 

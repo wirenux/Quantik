@@ -10,7 +10,7 @@ use molecule::{cpk_color, molecule_name, Molecule};
 use rfd::FileDialog;
 use window::{AppWindow, Color, Framebuffer};
 
-use crate::molecule::{atom_name, molar_mass, vdw_radius};
+use crate::molecule::{atom_name, molar_mass, molecule_formula, total_molar_mass, vdw_radius};
 
 const WIDTH: usize = 1280;
 const HEIGHT: usize = 720;
@@ -239,6 +239,50 @@ fn main() {
 
             needs_redraw = false;
             frames += 1;
+        }
+
+        {
+            let title_text = format!("{} (CID: {})", molecule_name(mol.cid), mol.cid);
+            let formula_text = format!(" Formula: {}", molecule_formula(&mol));
+            let nb_atoms_text = format!(" Atoms: {}", mol.atoms.len());
+            let nb_bonds_text = format!(" Bonds: {}", mol.bonds.len());
+            let total_mm_text = format!(" MM: {:.2} g/mol", total_molar_mass(&mol));
+
+            let lines: [&str; 5] = [
+                &title_text,
+                &formula_text,
+                &nb_atoms_text,
+                &nb_bonds_text,
+                &total_mm_text,
+            ];
+
+            let pad = 4;
+            let scale = 2;
+            let line_h = 8 * scale + 2;
+
+            let text_w = lines
+                .iter()
+                .map(|s| Framebuffer::text_width(s) * scale)
+                .max()
+                .unwrap_or(0);
+
+            let box_w = text_w + pad * 2;
+            let box_h = line_h * lines.len() + pad * 2;
+
+            let bx: usize = 8;
+            let by: usize = 8;
+
+            framebuffer.draw_rect(bx - 2, by - 2, box_w + 4, box_h + 4, Color::WHITE);
+            framebuffer.draw_rect(bx, by, box_w, box_h, Color::new(30, 30, 30));
+
+            for (i, line) in lines.iter().enumerate() {
+                let color = if i == 0 {
+                    Color::new(255, 200, 30)
+                } else {
+                    Color::WHITE
+                };
+                framebuffer.draw_text(bx + pad, by + pad + i * line_h, line, scale, color);
+            }
         }
 
         if hovered != last_hover {
