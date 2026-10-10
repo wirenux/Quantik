@@ -248,26 +248,21 @@ fn main() {
             let nb_bonds_text = format!(" Bonds: {}", mol.bonds.len());
             let total_mm_text = format!(" MM: {:.2} g/mol", total_molar_mass(&mol));
 
-            let lines: [&str; 5] = [
-                &title_text,
-                &formula_text,
-                &nb_atoms_text,
-                &nb_bonds_text,
-                &total_mm_text,
-            ];
-
             let pad = 4;
             let scale = 2;
             let line_h = 8 * scale + 2;
 
-            let text_w = lines
-                .iter()
-                .map(|s| Framebuffer::text_width(s) * scale)
-                .max()
-                .unwrap_or(0);
+            let line_widths = [
+                Framebuffer::text_width(&title_text) * scale,
+                Framebuffer::formula_width(&formula_text, scale),
+                Framebuffer::text_width(&nb_atoms_text) * scale,
+                Framebuffer::text_width(&nb_bonds_text) * scale,
+                Framebuffer::text_width(&total_mm_text) * scale,
+            ];
+            let text_w = *line_widths.iter().max().unwrap_or(&0);
 
             let box_w = text_w + pad * 2;
-            let box_h = line_h * lines.len() + pad * 2;
+            let box_h = line_h * 5 + pad * 2;
 
             let bx: usize = 8;
             let by: usize = 8;
@@ -275,14 +270,41 @@ fn main() {
             framebuffer.draw_rect(bx - 2, by - 2, box_w + 4, box_h + 4, Color::WHITE);
             framebuffer.draw_rect(bx, by, box_w, box_h, Color::new(30, 30, 30));
 
-            for (i, line) in lines.iter().enumerate() {
-                let color = if i == 0 {
-                    Color::new(255, 200, 30)
-                } else {
-                    Color::WHITE
-                };
-                framebuffer.draw_text(bx + pad, by + pad + i * line_h, line, scale, color);
-            }
+            framebuffer.draw_text(
+                bx + pad,
+                by + pad,
+                &title_text,
+                scale,
+                Color::new(255, 200, 0),
+            );
+            framebuffer.draw_formula(
+                bx + pad,
+                by + pad + line_h,
+                &formula_text,
+                scale,
+                Color::WHITE,
+            );
+            framebuffer.draw_text(
+                bx + pad,
+                by + pad + 2 * line_h,
+                &nb_atoms_text,
+                scale,
+                Color::WHITE,
+            );
+            framebuffer.draw_text(
+                bx + pad,
+                by + pad + 3 * line_h,
+                &nb_bonds_text,
+                scale,
+                Color::WHITE,
+            );
+            framebuffer.draw_text(
+                bx + pad,
+                by + pad + 4 * line_h,
+                &total_mm_text,
+                scale,
+                Color::WHITE,
+            );
         }
 
         if hovered != last_hover {

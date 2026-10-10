@@ -136,6 +136,50 @@ impl Framebuffer {
         text.chars().count() * 8
     }
 
+    pub fn draw_formula(&mut self, x: usize, y: usize, text: &str, scale: usize, color: Color) {
+        let scale = scale.max(1);
+        let small = (scale / 2).max(1);
+        let sub_offset = 8 * scale - 8 * small;
+        let mut cursor_x = x;
+
+        for ch in text.chars() {
+            let is_digit = ch.is_ascii_digit();
+            let s = if is_digit { small } else { scale };
+            let oy = if is_digit { sub_offset } else { 0 };
+
+            if let Some(glyph) = BASIC_FONTS.get(ch) {
+                for (row, byte) in glyph.iter().enumerate() {
+                    for col in 0..8 {
+                        if (byte >> col) & 1 == 1 {
+                            let px = cursor_x + col * s;
+                            let py = y + oy + row * s;
+                            for dy in 0..s {
+                                for dx in 0..s {
+                                    self.set_pixel(px + dx, py + dy, color);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            cursor_x += 8 * s;
+        }
+    }
+
+    pub fn formula_width(text: &str, scale: usize) -> usize {
+        let scale = scale.max(1);
+        let small = (scale / 2).max(1);
+        text.chars()
+            .map(|ch| {
+                if ch.is_ascii_digit() {
+                    8 * small
+                } else {
+                    8 * scale
+                }
+            })
+            .sum()
+    }
+
     pub fn draw_line(&mut self, mut x0: i32, mut y0: i32, x1: i32, y1: i32, color: Color) {
         let dx = (x1 - x0).abs();
         let dy = -(y1 - y0).abs();
