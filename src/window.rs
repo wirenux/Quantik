@@ -262,9 +262,9 @@ impl Framebuffer {
 
     pub fn draw_triangle(
         &mut self,
-        p0: (usize, usize),
-        p1: (usize, usize),
-        p2: (usize, usize),
+        p0: (f32, f32),
+        p1: (f32, f32),
+        p2: (f32, f32),
         d0: f32,
         d1: f32,
         d2: f32,
@@ -274,20 +274,28 @@ impl Framebuffer {
         base_color: Color,
         atom_id: usize,
     ) {
-        let min_x = p0.0.min(p1.0).min(p2.0);
-        let max_x = p0.0.max(p1.0).max(p2.0).min(self.width - 1);
+        let min_x_f = p0.0.min(p1.0).min(p2.0);
+        let max_x_f = p0.0.max(p1.0).max(p2.0);
+        let min_y_f = p0.1.min(p1.1).min(p2.1);
+        let max_y_f = p0.1.max(p1.1).max(p2.1);
 
-        let min_y = p0.1.min(p1.1).min(p2.1);
-        let max_y = p0.1.max(p1.1).max(p2.1).min(self.height - 1);
-
-        // triangle inside the margin ring, so nothing to draw
-        if min_x > max_x || min_y > max_y {
+        // if triangle outside of the screen don't need to draw it
+        if max_x_f < 0.0
+            || min_x_f > (self.width as f32 - 1.0)
+            || max_y_f < 0.0
+            || min_y_f > (self.height as f32 - 1.0)
+        {
             return;
         }
 
-        let v0 = (p0.0 as f32, p0.1 as f32);
-        let v1 = (p1.0 as f32, p1.1 as f32);
-        let v2 = (p2.0 as f32, p2.1 as f32);
+        let min_x = min_x_f.max(0.0).floor() as usize;
+        let max_x = max_x_f.min(self.width as f32 - 1.0).floor() as usize;
+        let min_y = min_y_f.max(0.0).floor() as usize;
+        let max_y = max_y_f.min(self.height as f32 - 1.0).floor() as usize;
+
+        let v0 = p0;
+        let v1 = p1;
+        let v2 = p2;
 
         // total area of the triangle
         let area = Self::edge_function(v0, v1, v2);

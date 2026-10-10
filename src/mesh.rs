@@ -186,7 +186,7 @@ impl Mesh {
             .map(|n| (model * Vec4::from((*n, 0.0))).xyz().normalize_or_zero())
             .collect();
 
-        let screen: Vec<Option<(usize, usize, f32)>> = world
+        let screen: Vec<Option<(f32, f32, f32)>> = world
             .iter()
             .map(|&p| project_point(p, view_proj, width, height))
             .collect();
@@ -260,7 +260,7 @@ pub fn project_point(
     mvp: Mat4,
     width: usize,
     height: usize,
-) -> Option<(usize, usize, f32)> {
+) -> Option<(f32, f32, f32)> {
     // convert 3D position (x, y, z) to homogeneous 4D coordinates (x, y, z, w=1.0)
     let point_4d = Vec4::from((point, 1.0));
     let clip_space = mvp * point_4d;
@@ -276,13 +276,6 @@ pub fn project_point(
     let x_pixel = ((ndc.x + 1.0) / 2.0) * width as f32;
     let y_pixel = ((1.0 - ndc.y) / 2.0) * height as f32; // invert Y (pixel 0 is top-left)
 
-    let x = x_pixel as usize;
-    let y = y_pixel as usize;
-
     // check if pixel inside window dimension
-    if x < width && y < height {
-        Some((x, y, clip_space.w))
-    } else {
-        None
-    }
+    Some((x_pixel, y_pixel, clip_space.w))
 }

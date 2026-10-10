@@ -62,12 +62,12 @@
 
 ### UI
 
-- [ ] A box with the name and info of the molecule (top-left corner)
+- [x] A box with the name and info of the molecule (top-left corner)
     - Important Info
         - [x] Molecule name & CID : `Water (CID: 962)`
-        - [ ] Formula
+        - [x] Formula
             - [x] Classic Way
-            - [ ] With height offset
+            - [x] With height offset
         - [x] Molar mass of molecule
     - Other info (open with a key press or a menu item on macos and windows)
         - [x] Number of bound
@@ -94,7 +94,8 @@
 
 ## BUG
 
-- [ ] When the base of a bound get outside of the screen the cylinder move (or look like it's moving)
+- [x] When the base of a bound get outside of the screen the cylinder move (or look like it's moving)
+- [x] When a point of a triangle was off screen on the bottom or on the right side of the screen the whole triangle was removed
 
 ## Idea
 
@@ -102,6 +103,8 @@
 - [ ] The minifb advantage is the macOS top bar can be switch to a windows/linux "in window" top bar
 - [ ] since minifb can't add top bar to linux -> rely on shortcut
 - [ ] Add a text in the buffer to say that a file must be selected to run the program (behind the file selector) (with the draw_text func)
+
+- [ ] Reorganise the project in more file (like the math part of drawing triangle etc... in a different file, instead of `window.rs`)
 
 - [ ] French/English toggle
 - [ ] Make a menu or something else to get the molecule file and open it
