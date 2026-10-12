@@ -391,6 +391,19 @@ impl Framebuffer {
             row_w2 += jump_w2;
         }
     }
+
+    pub fn draw_text_centered(&mut self, y: usize, text: &str, scale: usize, color: Color) {
+        let scale = scale.max(1);
+
+        let w = Self::text_width(text) * scale;
+        let x = self.width.saturating_sub(w) / 2;
+
+        self.draw_text(x, y, text, scale, color);
+    }
+
+    pub fn text_height(scale: usize) -> usize {
+        8 * scale.max(1)
+    }
 }
 
 impl AppWindow {
@@ -418,7 +431,14 @@ impl AppWindow {
             .shortcut(Key::O, MENU_KEY_CTRL) // ctrl even for macOS 'cause minifb make the change
             .build();
 
+        let mut mol_example_menu = Menu::new("Examples").unwrap();
+        mol_example_menu
+            .add_item("Show list", 2)
+            .shortcut(Key::E, MENU_KEY_CTRL)
+            .build();
+
         let menu_handle = Some(window.add_menu(&menu));
+        let _mol_example_menu_handle = window.add_menu(&mol_example_menu);
 
         Self {
             inner: window,
@@ -427,7 +447,7 @@ impl AppWindow {
     }
 
     pub fn active(&self) -> bool {
-        self.inner.is_open() && !self.inner.is_key_down(Key::Escape)
+        self.inner.is_open()
     }
 
     pub fn get_size(&self) -> (usize, usize) {

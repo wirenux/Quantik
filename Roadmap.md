@@ -46,7 +46,7 @@
 - [x] Window title with the name of the molecule / atoms and the CID (e.g: "`Quantik - Water: 962`")
 - [ ] macOS menu with keyboard shortcut
 - [x] Add cmd+o / ctrl+o
-- [ ] Menu to select molecule (or just a file opener for .sdf)
+- [x] Menu to select molecule (or just a file opener for .sdf)
 - [-] Use GPU
 
 ### Mouse click / integration
@@ -75,12 +75,12 @@
 
 ### Startpage
 
-- [ ] Title : `Quantik`
-- [ ] No 3d render for now
-- [ ] Menu/button to open the file selector
-- [ ] Erase FB
-- [ ] Change title to : `Quantik - Water (CID: 962)`
-- [ ] Render molecule and everything else
+- [x] Title : `Quantik`
+- [x] No 3d render for now
+- [x] Cmd+O (or Ctrl+O) / File > Open...
+- [x] Erase FB
+- [x] Change title to : `Quantik - Water (CID: 962)`
+- [x] Render molecule and everything else
 
 ## Order
 
@@ -106,12 +106,21 @@
 
 - [ ] Reorganise the project in more file (like the math part of drawing triangle etc... in a different file, instead of `window.rs`)
 
-- [ ] French/English toggle
-- [ ] Make a menu or something else to get the molecule file and open it
-- [ ] Also maybe create a list of molecule implemented in the program
+- [ ] French/English toggle (?)
+- [x] Make a menu or something else to get the molecule file and open it
+- [x] Also maybe create a list of molecule implemented in the program
+    - [x] Open with Cmd+E / Ctrl+E
+
+- [ ] Antialiasing
 
 ## Other
 
 
 Fun fact: when you press `Space` the molecule rotate (in reality it's the camera) and it also help me to know how much much i want having (since i calculate FPS when the framebuffer/screen is changing)
+
 Keyboard shortcut don't work on Linux (at least xfce w/ X11)
+
+Source :
+
+https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/overview-rasterization-algorithm.html?utm_source=gemini
+https://schneide.blog/2016/07/15/generating-an-icosphere-in-c/
