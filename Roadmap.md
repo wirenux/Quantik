@@ -111,6 +111,10 @@
 - [x] Also maybe create a list of molecule implemented in the program
     - [x] Open with Cmd+E / Ctrl+E
 
+- [ ] Don't render anything behind the UI
+
+- [ ] Add @wirenux on the startpage on the bottom left or right
+
 - [ ] Antialiasing
 
 ## Other
