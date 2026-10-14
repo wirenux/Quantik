@@ -1,7 +1,5 @@
 use font8x8::{UnicodeFonts, BASIC_FONTS};
-use minifb::{
-    Key, Menu, MouseButton, MouseMode, Window, WindowOptions, MENU_KEY_COMMAND, MENU_KEY_CTRL,
-};
+use minifb::{Key, Menu, MouseButton, MouseMode, Window, WindowOptions, MENU_KEY_CTRL};
 use rayon::prelude::*;
 
 pub struct AppWindow {
@@ -25,7 +23,27 @@ pub struct Framebuffer {
 }
 
 impl Color {
+    pub const AMBER: Color = Color {
+        r: 255,
+        g: 200,
+        b: 0,
+    };
     pub const BLACK: Color = Color { r: 0, g: 0, b: 0 };
+    pub const DARK_GREY: Color = Color {
+        r: 30,
+        g: 30,
+        b: 30,
+    };
+    pub const GREY: Color = Color {
+        r: 180,
+        g: 180,
+        b: 180,
+    };
+    pub const LIGHT_PURPLE: Color = Color {
+        r: 180,
+        g: 180,
+        b: 255,
+    };
     pub const RED: Color = Color { r: 255, g: 0, b: 0 };
     pub const WHITE: Color = Color {
         r: 255,

@@ -100,8 +100,8 @@
 ## Idea
 
 - [x] Maybe use minifb instead of Ratatui to get a simple window like "black" (on github)
-- [ ] The minifb advantage is the macOS top bar can be switch to a windows/linux "in window" top bar
-- [ ] since minifb can't add top bar to linux -> rely on shortcut
+- [x] The minifb advantage is the macOS top bar can be switch to a windows/linux "in window" top bar
+- [x] since minifb can't add top bar to linux -> rely on shortcut
 - [ ] Add a text in the buffer to say that a file must be selected to run the program (behind the file selector) (with the draw_text func)
 
 - [ ] Reorganise the project in more file (like the math part of drawing triangle etc... in a different file, instead of `window.rs`)
@@ -113,7 +113,7 @@
 
 - [ ] Don't render anything behind the UI
 
-- [ ] Add @wirenux on the startpage on the bottom left or right
+- [x] Add @wirenux on the startpage on the bottom left or right
 
 - [ ] Antialiasing
 
