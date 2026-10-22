@@ -115,7 +115,7 @@
 
 - [x] Add @wirenux on the startpage on the bottom left or right
 
-- [ ] Antialiasing
+- [x] Antialiasing (SSAA)
 
 ## Other
 

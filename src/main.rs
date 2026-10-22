@@ -15,6 +15,8 @@ use crate::molecule::{atom_name, make_examples, molar_mass, molecule_formula, to
 
 const WIDTH: usize = 1280;
 const HEIGHT: usize = 720;
+const SS_BQ: usize = 1;
+const SS_HQ: usize = 3;
 
 fn reframe(m: &Molecule) -> (Vec3, Camera) {
     // reframe the cam around the new mol
@@ -32,7 +34,11 @@ fn reframe(m: &Molecule) -> (Vec3, Camera) {
 }
 
 fn main() {
+    let mut ss = SS_BQ;
+
     let mut framebuffer = Framebuffer::new(WIDTH, HEIGHT);
+    let mut render_fb = Framebuffer::new(WIDTH * ss, HEIGHT * ss);
+
     let mut window = AppWindow::new("Quantik", WIDTH, HEIGHT);
 
     let sphere = Mesh::generate_uv_sphere(1.0, 16, 16);
@@ -128,20 +134,34 @@ fn main() {
 
         if framebuffer.width != current_width || framebuffer.height != current_height {
             framebuffer.resize(current_width, current_height); // resize content of fb (on macos it's when releasing the resize handle)
+            render_fb.resize(current_width * ss, current_height * ss);
             needs_redraw = true;
         }
 
-        if mol.is_some() && camera.handle_input(&window) {
+        let moved = mol.is_some() && camera.handle_input(&window);
+        if moved {
+            needs_redraw = true;
+        }
+
+        let want = if moved {
+            SS_BQ
+        } else {
+            SS_HQ
+        };
+
+        if want != ss {
+            ss = want;
+            render_fb.resize(current_width * ss, current_height * ss);
             needs_redraw = true;
         }
 
         let mouse_pos = window.get_mouse_pos();
         let hovered: Option<usize> = mouse_pos.and_then(|(mx, my)| {
-            let mx = mx as usize;
-            let my = my as usize;
-            if mx < framebuffer.width && my < framebuffer.height {
-                let idx = my * framebuffer.width + mx;
-                let atom_idx = framebuffer.atom_ids[idx];
+            let x = (mx * ss as f32) as usize;
+            let y = (my * ss as f32) as usize;
+            if x < render_fb.width && y < render_fb.height {
+                let idx = y * render_fb.width + x;
+                let atom_idx = render_fb.atom_ids[idx];
                 if atom_idx != usize::MAX {
                     Some(atom_idx)
                 } else {
@@ -154,6 +174,7 @@ fn main() {
 
         if needs_redraw {
             framebuffer.clear(Color::BLACK);
+            render_fb.clear(Color::BLACK);
 
             match &mol {
                 Some(m) => {
@@ -165,7 +186,7 @@ fn main() {
                         let model = Mat4::from_translation(atom.position + shift)
                             * Mat4::from_scale(Vec3::splat(radius));
 
-                        sphere.draw(&mut framebuffer, model, &camera, color, index);
+                        sphere.draw(&mut render_fb, model, &camera, color, index);
                     }
 
                     let bond_radius = 0.08;
@@ -193,7 +214,7 @@ fn main() {
                                 * Mat4::from_quat(rot)
                                 * Mat4::from_scale(Vec3::new(bond_radius, len, bond_radius));
                             cylinder.draw(
-                                &mut framebuffer,
+                                &mut render_fb,
                                 model,
                                 &camera,
                                 Color::WHITE,
@@ -201,6 +222,8 @@ fn main() {
                             );
                         }
                     }
+
+                    render_fb.resolve_into(&mut framebuffer, ss);
 
                     if let (Some(idx), Some((mx, my))) = (last_hover, mouse_pos) {
                         let atom = &m.atoms[idx];

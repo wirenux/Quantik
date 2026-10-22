@@ -422,6 +422,31 @@ impl Framebuffer {
     pub fn text_height(scale: usize) -> usize {
         8 * scale.max(1)
     }
+
+    pub fn resolve_into(&self, dst: &mut Framebuffer, ss: usize) {
+        let dw = dst.width;
+        let src_w = self.width;
+        let n = (ss * ss) as u32;
+
+        dst.pixels
+            .par_chunks_mut(dw)
+            .enumerate()
+            .for_each(|(y, row)| {
+                for x in 0..dw {
+                    let (mut r, mut g, mut b) = (0u32, 0u32, 0u32);
+                    for sy in 0..ss {
+                        let base = (y * ss + sy) * src_w + x * ss;
+                        for sx in 0..ss {
+                            let c = self.pixels[base + sx];
+                            r += c.r as u32;
+                            g += c.g as u32;
+                            b += c.b as u32;
+                        }
+                    }
+                    row[x] = Color::new((r / n) as u8, (g / n) as u8, (b / n) as u8);
+                }
+            });
+    }
 }
 
 impl AppWindow {
