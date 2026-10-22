@@ -128,3 +128,7 @@ Source :
 
 https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/overview-rasterization-algorithm.html?utm_source=gemini
 https://schneide.blog/2016/07/15/generating-an-icosphere-in-c/
+
+Logo credit:
+
+@wirenux with the help of @c3a5m7
