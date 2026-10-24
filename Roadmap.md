@@ -44,7 +44,7 @@
 - [x] How to display the view
     - [x] Use framebuffer
 - [x] Window title with the name of the molecule / atoms and the CID (e.g: "`Quantik - Water: 962`")
-- [ ] macOS menu with keyboard shortcut
+- [x] macOS menu with keyboard shortcut
 - [x] Add cmd+o / ctrl+o
 - [x] Menu to select molecule (or just a file opener for .sdf)
 - [-] Use GPU
