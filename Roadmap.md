@@ -104,7 +104,7 @@
 - [x] since minifb can't add top bar to linux -> rely on shortcut
 - [x] Add a text in the buffer to say that a file must be selected to run the program (behind the file selector) (with the draw_text func)
 
-- [ ] Reorganise the project in more file (like the math part of drawing triangle etc... in a different file, instead of `window.rs`)
+- [x] Reorganise the project in more file (like the math part of drawing triangle etc... in a different file, instead of `window.rs`)
 
 - [ ] French/English toggle (?)
 - [x] Make a menu or something else to get the molecule file and open it
