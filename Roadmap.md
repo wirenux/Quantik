@@ -122,6 +122,8 @@
 
 Fun fact: when you press `Space` the molecule rotate (in reality it's the camera) and it also help me to know how much much i want having (since i calculate FPS when the framebuffer/screen is changing)
 
+Fun fact: I choose the name Quantik because Atomik was already taken
+
 Keyboard shortcut don't work on Linux (at least xfce w/ X11)
 
 Source :
