@@ -132,3 +132,10 @@ https://schneide.blog/2016/07/15/generating-an-icosphere-in-c/
 Logo credit:
 
 @wirenux with the help of @c3a5m7
+
+To build on windows :
+
+```bash
+set RUSTFLAGS=-C target-feature=+crt-static
+cargo build --release
+```
