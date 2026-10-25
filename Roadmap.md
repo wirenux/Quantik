@@ -106,7 +106,7 @@
 
 - [x] Reorganise the project in more file (like the math part of drawing triangle etc... in a different file, instead of `window.rs`)
 
-- [ ] French/English toggle (?)
+- [?] French/English toggle (?)
 - [x] Make a menu or something else to get the molecule file and open it
 - [x] Also maybe create a list of molecule implemented in the program
     - [x] Open with Cmd+E / Ctrl+E
