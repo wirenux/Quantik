@@ -133,7 +133,7 @@ Logo credit:
 
 @wirenux with the help of @c3a5m7
 
-To build on windows :
+To build for the windows version (need to be on a x86-64 windows to build the windows version):
 
 ```bash
 set RUSTFLAGS=-C target-feature=+crt-static
