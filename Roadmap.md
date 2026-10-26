@@ -128,7 +128,7 @@ Keyboard shortcut don't work on Linux (at least xfce w/ X11)
 
 Source :
 
-https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/overview-rasterization-algorithm.html?utm_source=gemini
+https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/overview-rasterization-algorithm.html
 https://schneide.blog/2016/07/15/generating-an-icosphere-in-c/
 
 Logo credit:
