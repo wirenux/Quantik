@@ -5,7 +5,6 @@
 
 <p align="center">
     <img src="https://img.shields.io/badge/Rust-F54A2A.svg?logo=rust&logoColor=white" />
-    <img src="https://img.shields.io/badge/Linux-FCC000?logo=linux&logoColor=black" />
     <img src="https://img.shields.io/badge/macOS-000000?logo=apple&logoColor=F0F0F0" />
     <img src="https://custom-icon-badges.demolab.com/badge/Windows-0078D6?logo=windows11&logoColor=white" />
     <img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat&logo=open-source-initiative&logoColor=white" />
