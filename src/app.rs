@@ -116,7 +116,6 @@ impl App {
             }
 
             self.present();
-            // TODO: Remove in release build
             self.print_fps();
         }
     }

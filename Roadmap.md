@@ -134,10 +134,3 @@ https://schneide.blog/2016/07/15/generating-an-icosphere-in-c/
 Logo credit:
 
 @wirenux with the help of @c3a5m7
-
-To build for the windows version (need to be on a x86-64 windows to build the windows version):
-
-```bash
-set RUSTFLAGS=-C target-feature=+crt-static
-cargo build --release
-```
