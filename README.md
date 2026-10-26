@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="assets/logo_1024x1024.png" width="256px" style="border-radius: 20px" />
+    <img src="assets/logo_rounded.png" width="256px" />
     <h1 align="center">Quantik</h1>
 </p>
 
