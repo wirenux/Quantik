@@ -126,6 +126,8 @@
 
 - [x] Add menu option to open github page
 
+- [ ] (LAST) update screenshot
+
 ## Other
 
 
