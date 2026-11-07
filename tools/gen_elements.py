@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""
-Usage:
-    python3 gen_element.py                      # print to stdout
-    python3 gen_element.py -o src/molecule/element.rs
-    python3 gen_element.py -i PeriodicTableJSON.json -o element.rs   # local copy
-"""
+
+# Usage:
+#     python3 gen_element.py # print to stdout
+#     python3 gen_element.py -o src/molecule/element.rs # save to .rs file
+#     python3 gen_element.py -i PeriodicTableJSON.json -o element.rs # save to .rs file but from local .json file
 
 import argparse
 import json
