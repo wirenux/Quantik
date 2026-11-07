@@ -3,6 +3,7 @@ use super::framebuffer::Framebuffer;
 use crate::math::edge_function;
 
 impl Framebuffer {
+    #[allow(dead_code)]
     pub fn draw_line(&mut self, mut x0: i32, mut y0: i32, x1: i32, y1: i32, color: Color) {
         let dx = (x1 - x0).abs();
         let dy = -(y1 - y0).abs();
@@ -31,6 +32,7 @@ impl Framebuffer {
         }
     }
 
+    #[allow(dead_code)]
     pub fn draw_line_depth(
         &mut self,
         mut x0: i32,

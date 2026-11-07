@@ -117,6 +117,13 @@
 
 - [x] Antialiasing (SSAA)
 
+- [x] Add lone-pair
+    - [ ] Talk about it in the readme and the keybind
+
+- [x] Use https://github.com/Bowserinator/Periodic-Table-JSON for json data instead of hardcoded one
+    - [x] For valence e⁻ use the "group" value - 10 (only b/w group 13-18) and for helium just return 2
+    - [x] Use a python script to do so
+
 ## Other
 
 

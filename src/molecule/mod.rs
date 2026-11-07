@@ -9,4 +9,4 @@ pub use element::{atom_name, cpk_color, molar_mass, vdw_radius};
 pub use examples::make_examples;
 pub use model::{Atom, Molecule};
 pub use name::molecule_name;
-pub use properties::{molecule_formula, total_molar_mass};
+pub use properties::{lone_pair_dirs, lone_pairs, molecule_formula, total_molar_mass};

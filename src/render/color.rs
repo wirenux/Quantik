@@ -27,7 +27,7 @@ impl Color {
         g: 180,
         b: 255,
     };
-    pub const RED: Color = Color { r: 255, g: 0, b: 0 };
+    //pub const RED: Color = Color { r: 255, g: 0, b: 0 };
     pub const WHITE: Color = Color {
         r: 255,
         g: 255,

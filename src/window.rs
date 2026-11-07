@@ -2,6 +2,7 @@ use minifb::{Key, Menu, MouseButton, MouseMode, Window, WindowOptions, MENU_KEY_
 
 pub struct AppWindow {
     inner: Window,
+    #[expect(dead_code, reason = "kept so the menu lives as long as the window")]
     menu_handle: Option<minifb::MenuHandle>,
 }
 

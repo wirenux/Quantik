@@ -38,6 +38,7 @@ impl Molecule {
                 atoms.push(Atom {
                     element,
                     position: Vec3::new(x, y, z),
+                    charge: 0,
                 });
             }
         }
@@ -57,6 +58,25 @@ impl Molecule {
                     b: atom2.saturating_sub(1),
                     order,
                 });
+            }
+        }
+
+        for line in lines {
+            if line.starts_with("M  END") {
+                break;
+            }
+            if line.starts_with("M  CHG") {
+                let parts: Vec<&str> = line.split_whitespace().collect();
+                let n: usize = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(0);
+                for k in 0..n {
+                    let idx: Option<usize> = parts.get(3 + 2 * k).and_then(|s| s.parse().ok());
+                    let chg: Option<i32> = parts.get(4 + 2 * k).and_then(|s| s.parse().ok());
+                    if let (Some(i), Some(c)) = (idx, chg) {
+                        if i >= 1 && i <= atoms.len() {
+                            atoms[i - 1].charge = c;
+                        }
+                    }
+                }
             }
         }
 

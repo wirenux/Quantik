@@ -4,6 +4,7 @@ use glam::Vec3;
 pub struct Atom {
     pub element: String,
     pub position: Vec3,
+    pub charge: i32,
 }
 
 #[derive(Clone)]
@@ -23,16 +24,17 @@ pub struct Molecule {
 impl Molecule {
     pub fn from_parts(
         cid: usize,
-        atoms: Vec<(&str, Vec3)>,
+        atoms: Vec<(&str, Vec3, i32)>,
         bonds: Vec<(usize, usize, u8)>,
     ) -> Self {
         Self {
             cid,
             atoms: atoms
                 .into_iter()
-                .map(|(e, p)| Atom {
+                .map(|(e, p, c)| Atom {
                     element: e.to_string(),
                     position: p,
+                    charge: c,
                 })
                 .collect(),
             bonds: bonds

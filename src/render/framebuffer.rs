@@ -44,6 +44,7 @@ impl Framebuffer {
         }
     }
 
+    #[allow(dead_code)]
     pub fn get_pixels(&self, x: usize, y: usize) -> Color {
         if x < self.width && y < self.height {
             self.pixels[y * self.width + x]

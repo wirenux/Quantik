@@ -55,6 +55,8 @@ struct App {
 
     frames: u32,
     last_print: Instant,
+
+    show_lp: bool,
 }
 
 impl App {
@@ -80,6 +82,8 @@ impl App {
 
             frames: 0,
             last_print: Instant::now(),
+
+            show_lp: true,
         }
     }
 
@@ -92,6 +96,11 @@ impl App {
                 } else {
                     break;
                 }
+            }
+
+            if self.window.is_key_pressed(Key::L) {
+                self.show_lp = !self.show_lp;
+                self.needs_redraw = true;
             }
 
             self.handle_menu();
@@ -228,6 +237,7 @@ impl App {
                     &self.camera,
                     &self.sphere,
                     &self.cylinder,
+                    self.show_lp,
                 );
                 self.render_fb.resolve_into(&mut self.framebuffer, self.ss);
 
