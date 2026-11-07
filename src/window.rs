@@ -37,8 +37,15 @@ impl AppWindow {
             .shortcut(Key::E, MENU_KEY_CTRL)
             .build();
 
+        let mut github_menu = Menu::new("Help").unwrap();
+        github_menu
+            .add_item("Open help (Github)", 3)
+            .shortcut(Key::Slash, MENU_KEY_CTRL)
+            .build();
+
         let menu_handle = Some(window.add_menu(&menu));
-        let _mol_example_menu_handle = window.add_menu(&mol_example_menu);
+        let _mol_example_menu_handle = window.add_menu(&mol_example_menu); // DO NOT REMOVE
+        let _github_menu_handle = window.add_menu(&github_menu); // DO NOT REMOVE
 
         Self {
             inner: window,

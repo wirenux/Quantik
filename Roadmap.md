@@ -124,6 +124,8 @@
     - [x] For valence e⁻ use the "group" value - 10 (only b/w group 13-18) and for helium just return 2
     - [x] Use a python script to do so
 
+- [x] Add menu option to open github page
+
 ## Other
 
 

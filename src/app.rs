@@ -20,6 +20,7 @@ const SS_HQ: usize = 3;
 
 const MENU_OPEN: usize = 1;
 const MENU_EXAMPLE: usize = 2;
+const MENU_GITHUB: usize = 3;
 
 pub fn run() {
     App::new().run();
@@ -161,6 +162,9 @@ impl App {
             Some(MENU_EXAMPLE) => {
                 self.show_examples = !self.show_examples;
                 self.needs_redraw = true;
+            },
+            Some(MENU_GITHUB) => {
+                let _ = open::that("https://github.com/wirenux/Quantik");
             },
             _ => {}
         }
