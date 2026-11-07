@@ -126,6 +126,10 @@
 
 - [x] Add menu option to open github page
 
+- [ ] Add angle mesure
+
+- [ ] Add polarity mesure ?
+
 - [ ] (LAST) update screenshot
 
 ## Other
